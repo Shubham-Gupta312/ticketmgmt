@@ -19,13 +19,17 @@
         color: rgb(220, 56, 72);
         ;
     }
+
+    #DepartmentForm input::placeholder {
+        color: #b7bcc1;
+    }
 </style>
 
 <?= $this->endSection(); ?>
 
 <div class="page-wrapper">
     <div class="row page-titles d-flex justify-content-end">
-        <button class="btn btn-outline-primary" id="addDept">Add Department</button>
+        <button class="btn btn-outline-primary" id="addDept"><i class="fas fa-plus"></i> Add Department</button>
     </div>
     <div class="container-fluid">
         <div class="category-from">
@@ -300,7 +304,7 @@
                         button.removeClass('btn-outline-danger').addClass('btn-outline-success');
                         $.notify("Department Active Successfully!", 'success');
                     } else {
-                        button.data('status', 'deactive').html('<i class="fas fa-window-close"></i>');
+                        button.data('status', 'deactive').html('<i class="far fa-times-circle"></i>');
                         button.removeClass('btn-outline-success').addClass('btn-outline-danger');
                         $.notify("Department In-Active!");
                     }

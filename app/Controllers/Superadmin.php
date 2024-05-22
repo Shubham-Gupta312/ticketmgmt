@@ -174,7 +174,7 @@ class Superadmin extends BaseController
                 $statusText = ($status == 1) ? 'active' : 'deactive';
                 if ($status == 0) {
                     $buttonCSSClass = 'btn-outline-danger';
-                    $buttonName = 'fas fa-window-close';
+                    $buttonName = 'far fa-times-circle';
                 } elseif ($status == 1) {
                     $buttonCSSClass = 'btn-outline-success';
                     $buttonName = 'fas fa-check-circle';
