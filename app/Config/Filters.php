@@ -2,7 +2,6 @@
 
 namespace Config;
 
-use App\Filters\IsSuperAdminFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -13,6 +12,7 @@ use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\PageCache;
 use CodeIgniter\Filters\PerformanceMetrics;
 use CodeIgniter\Filters\SecureHeaders;
+use App\Filters\IsLogin;
 
 class Filters extends BaseFilters
 {
@@ -35,7 +35,7 @@ class Filters extends BaseFilters
         'forcehttps' => ForceHTTPS::class,
         'pagecache' => PageCache::class,
         'performance' => PerformanceMetrics::class,
-        'IsSuperAdmin' => IsSuperAdminFilter::class,
+        'IsAuth' => IsLogin::class,
     ];
 
     /**
@@ -74,12 +74,18 @@ class Filters extends BaseFilters
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
-            'IsSuperAdmin' => [
+            'IsAuth' => [
                 'except' => [
+                    'home/ticket_login',
+                    'home/ticket_login/*',
+                    'home/signout',
+                    'home/signout/*',
                     'superadmin/login',
                     'superadmin/login/*',
                     'superadmin/register',
                     'superadmin/register/*',
+                    'superadmin/logout',
+                    'superadmin/logout/*',
                 ]
             ],
         ],

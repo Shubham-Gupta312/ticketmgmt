@@ -48,10 +48,12 @@
                 <!-- ============================================================== -->
                 <ul class="navbar-nav mr-auto float-left">
                     <!-- This is  -->
-                    <li class="nav-item"> <a class="nav-link sidebartoggler d-none d-md-block waves-effect waves-dark"
-                            href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
-                    <!-- ============================================================== -->
-                    <!-- ============================================================== -->
+                    <?php if (session()->get('loggedin') == 'adminloggedin'): ?>
+                        <li class="nav-item"> <a class="nav-link sidebartoggler d-none d-md-block waves-effect waves-dark"
+                                href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                        <!-- ============================================================== -->
+                        <!-- ============================================================== -->
+                    <?php endif ?>
                 </ul>
                 <!-- ============================================================== -->
                 <!-- Right side toggle and nav items -->
@@ -73,7 +75,9 @@
                                                 alt="user" class="rounded" width="80"></div>
                                         <div class="u-text ml-2">
                                             <h4 class="mb-0">
-                                                <?php if (session()->loggedin == 'adminloggedin'): ?>
+                                                <?php if (session()->get('loggedin') == 'adminloggedin'): ?>
+                                                    <?= ucfirst(session()->username); ?>
+                                                <?php elseif (session()->get('loggedin') == 'authloggedin'): ?>
                                                     <?= ucfirst(session()->username); ?>
                                                 <?php endif ?>
                                             </h4>
@@ -81,9 +85,15 @@
                                     </div>
                                 </li>
                                 <li class="user-list">
-                                    <a class="px-3 py-2" href="<?= base_url('superadmin/logout') ?>">
-                                        <i class="fa fa-power-off"></i> Logout
-                                    </a>
+                                    <?php if (session()->get('loggedin') == 'adminloggedin'): ?>
+                                        <a class="px-3 py-2" href="<?= base_url('superadmin/logout') ?>">
+                                            <i class="fa fa-power-off"></i> Logout
+                                        </a>
+                                    <?php elseif (session()->get('loggedin') == 'authloggedin'): ?>
+                                        <a class="px-3 py-2" href="<?= base_url('home/signout') ?>">
+                                            <i class="fa fa-power-off"></i> Logout
+                                        </a>
+                                    <?php endif ?>
                                 </li>
                             </ul>
                         </div>
@@ -99,55 +109,59 @@
     <!-- ============================================================== -->
     <!-- Left Sidebar - style you can find in sidebar.scss  -->
     <!-- ============================================================== -->
-    <aside class="left-sidebar">
-        <!-- Sidebar scroll-->
-        <div class="scroll-sidebar">
-            <!-- Sidebar navigation-->
-            <nav class="sidebar-nav">
-                <ul id="sidebarnav">
-                    <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark" href="<?= base_url() ?>"
-                            aria-expanded="false">
-                            <i class="fas fa-th-list"></i>
-                            <span class="hide-menu">Dashboard </span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
-                            aria-expanded="false">
-                            <i class="mdi mdi-gauge"></i>
-                            <span class="hide-menu">Master</span>
-                        </a>
-                        <ul aria-expanded="false" class="collapse  first-level">
-                            <li class="sidebar-item">
-                                <a href="<?= base_url('superadmin/addDepartment') ?>" class="sidebar-link">
-                                    <i class="mdi mdi-adjust"></i>
-                                    <span class="hide-menu"> Add Department </span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">
-                                    <i class="mdi mdi-adjust"></i>
-                                    <span class="hide-menu"> Add Services </span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark" href="javascript:void(0)"
-                            aria-expanded="false"><i class="mdi mdi-content-copy"></i><span class="hide-menu">Raised
-                                Tickets </span></a>
-                    </li>
-                </ul>
-            </nav>
-            <!-- End Sidebar navigation -->
-        </div>
-        <!-- End Sidebar scroll-->
-        <!-- Bottom points-->
-        <div class="sidebar-footer">
-            <div class="container" style="text-align: center; margin: 10px auto;">
-                <a href="<?= base_url('superadmin/logout') ?>" class="link" data-toggle="tooltip" title="Logout">
-                    <i class="mdi mdi-power" style="font-size: 20px;"></i>
-                </a>
+    <?php if (session()->get('loggedin') == 'adminloggedin'): ?>
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark" href="<?= base_url() ?>"
+                                aria-expanded="false">
+                                <i class="fas fa-th-list"></i>
+                                <span class="hide-menu">Dashboard </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
+                                aria-expanded="false">
+                                <i class="mdi mdi-gauge"></i>
+                                <span class="hide-menu">Master</span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse  first-level">
+                                <li class="sidebar-item">
+                                    <a href="<?= base_url('superadmin/addDepartment') ?>" class="sidebar-link">
+                                        <i class="mdi mdi-adjust"></i>
+                                        <span class="hide-menu"> Add Department </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a href="<?= base_url('superadmin/addService') ?>" class="sidebar-link">
+                                        <i class="mdi mdi-adjust"></i>
+                                        <span class="hide-menu"> Add Services </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
             </div>
-        </div>
-        <!-- End Bottom points-->
-    </aside>
+            <!-- End Sidebar scroll-->
+            <!-- Bottom points-->
+            <div class="sidebar-footer">
+                <div class="container" style="text-align: center; margin: 10px auto;">
+                    <?php if (session()->get('loggedin') == 'adminloggedin'): ?>
+                        <a href="<?= base_url('superadmin/logout') ?>" class="link" data-toggle="tooltip" title="Logout">
+                            <i class="mdi mdi-power" style="font-size: 20px;"></i>
+                        </a>
+                    <?php elseif (session()->get('loggedin') == 'authloggedin'): ?>
+                        <a href="<?= base_url('home/signout') ?>" class="link" data-toggle="tooltip" title="Logout">
+                            <i class="mdi mdi-power" style="font-size: 20px;"></i>
+                        </a>
+                    <?php endif ?>
+                </div>
+            </div>
+            <!-- End Bottom points-->
+        </aside>
+    <?php endif ?>

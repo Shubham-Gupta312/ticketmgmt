@@ -96,6 +96,26 @@
       <!-- Column -->
     </div>
 
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover" id="RaisedTickets">
+        <thead>
+          <tr>
+            <th scope="col">Sl.no</th>
+            <th scope="col">Ticket Id</th>
+            <th scope="col">Raised By</th>
+            <th scope="col">Issue</th>
+            <th scope="col">Message</th>
+            <th scope="col">Attachement</th>
+            <th scope="col">Ticket Status</th>
+            <th scope="col">Ticket Raised Date</th>
+            <th scope="col">Ticket Closed Date</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 
   <?= $this->endSection() ?>

@@ -284,4 +284,94 @@ class Superadmin extends BaseController
         }
     }
 
+    public function addService()
+    {
+        if ($_POST) {
+            $validation = $this->validate([
+                'srvc' => 'required|regex_match[/^[a-zA-Z0-9\s]+$/]',
+            ]);
+            if (!$validation) {
+                $validation = \Config\Services::validation();
+                $errors = $validation->getErrors();
+                $message = ['status' => 'error', 'data' => 'Validate form', 'errors' => $errors];
+                return $this->response->setJSON($message);
+            } else {
+                $srvc = trim($this->request->getPost('srvc'));
+
+                $data = array();
+                $data['service'] = ucwords(esc($srvc));
+                $data['created_at'] = date('Y-m-d H:i:s');
+
+                $Q = $this->gM->insertInto("service", $data);
+                if ($Q) {
+                    $response = ['status' => 'success', 'message' => 'Services Added Successfully!'];
+                } else {
+                    $response = ['status' => 'error', 'message' => 'Something went wrong!'];
+                }
+                return $this->response->setJSON($response);
+            }
+        } else {
+            return view('superadmin/addService');
+        }
+    }
+
+    public function servicedata()
+    {
+        try {
+            $draw = $_GET['draw'] ?? 1;
+            $start = $_GET['start'] ?? 0;
+            $length = $_GET['length'] ?? 10;
+            $searchValue = $_GET['search']['value'] ?? '';
+            $orderColumnIndex = $_GET['order'][0]['column'] ?? 0;
+            $orderColumnName = $_GET['columns'][$orderColumnIndex]['data'] ?? 'id';
+            $orderDir = $_GET['order'][0]['dir'] ?? 'asc';
+
+            $dt = $this->gM->getResp('service');
+
+            if (!empty($searchValue)) {
+                $dt->groupStart()
+                    ->orLike('service', $searchValue)
+                    ->groupEnd();
+            }
+
+            $dt->orderBy($orderColumnName, $orderDir);
+
+            $data = $dt->get($length, $start)->getResultArray();
+
+            $totalRecords = $this->gM->countData('service');
+            $totalFilteredRecords = !empty($searchValue) ? $this->gM->countFilteredserviceData('service', $searchValue) : $totalRecords;
+
+            $associativeArray = array_map(function ($row) {
+                $status = $row['is_active'];
+                $statusText = ($status == 1) ? 'active' : 'deactive';
+                if ($status == 0) {
+                    $buttonCSSClass = 'btn-outline-danger';
+                    $buttonName = 'far fa-times-circle';
+                } elseif ($status == 1) {
+                    $buttonCSSClass = 'btn-outline-success';
+                    $buttonName = 'fas fa-check-circle';
+                }
+                return [
+                    0 => $row['id'],
+                    1 => $row['service'],
+                    2 => '<button class="btn btn-outline-info" id="edit" data-bs-toggle="modal" data-bs-target="#editModal" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+                    <button class="btn ' . $buttonCSSClass . '" id="actv" data-status="' . $statusText . '" title="' . ucwords($statusText) . '"><i class="' . $buttonName . '"></i></button>
+                    <button class="btn btn-outline-danger" id="dlt" title="Delete"><i class="fas fa-trash-alt"></i></button>'
+                ];
+            }, $data);
+
+            $output = [
+                'draw' => intval($draw),
+                'recordsTotal' => $totalRecords,
+                'recordsFiltered' => $totalFilteredRecords,
+                'data' => $associativeArray
+            ];
+
+            return $this->response->setJSON($output);
+
+        } catch (\Exception $e) {
+            // Handle exception if something goes wrong
+            echo 'Error: ' . $e->getMessage();
+        }
+    }
 }

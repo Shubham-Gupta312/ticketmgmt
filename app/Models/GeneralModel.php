@@ -36,6 +36,14 @@ class GeneralModel extends Model
             ->groupEnd();
         return $builder->countAllResults();
     }
+    function countFilteredserviceData($table, $searchValue)
+    {
+        $builder = $this->db->table($table);
+        $builder->groupStart()
+            ->orLike('service', $searchValue)
+            ->groupEnd();
+        return $builder->countAllResults();
+    }
 
     function updateStatus($table, $where, $status)
     {
@@ -67,5 +75,23 @@ class GeneralModel extends Model
         $builder = $this->db->table($table);
         $builder->where('id', esc($where));
         return $builder->update($data);
+    }
+
+    function getData($table, $where)
+    {
+        $table = esc($table);
+        $where = esc($where);
+
+        $builder = $this->db->table($table);
+        $builder->where('dept_username', $where);
+        $q = $builder->get();
+
+        return $q->getRowArray();
+    }
+
+    function getTableData($table)
+    {
+        $builder = $this->db->table($table);
+        return $builder->get()->getResult();
     }
 }
