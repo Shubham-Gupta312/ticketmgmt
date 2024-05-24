@@ -289,6 +289,7 @@ class Superadmin extends BaseController
         if ($_POST) {
             $validation = $this->validate([
                 'srvc' => 'required|regex_match[/^[a-zA-Z0-9\s]+$/]',
+                'dept' => 'required',
             ]);
             if (!$validation) {
                 $validation = \Config\Services::validation();
@@ -297,9 +298,11 @@ class Superadmin extends BaseController
                 return $this->response->setJSON($message);
             } else {
                 $srvc = trim($this->request->getPost('srvc'));
+                $dpt = trim($this->request->getPost('dept'));
 
                 $data = array();
                 $data['service'] = ucwords(esc($srvc));
+                $data['department'] = esc($dpt);
                 $data['created_at'] = date('Y-m-d H:i:s');
 
                 $Q = $this->gM->insertInto("service", $data);
@@ -311,7 +314,8 @@ class Superadmin extends BaseController
                 return $this->response->setJSON($response);
             }
         } else {
-            return view('superadmin/addService');
+            $data['dept'] = $this->gM->getTableData('department');
+            return view('superadmin/addService', $data);
         }
     }
 
@@ -372,6 +376,80 @@ class Superadmin extends BaseController
         } catch (\Exception $e) {
             // Handle exception if something goes wrong
             echo 'Error: ' . $e->getMessage();
+        }
+    }
+
+    public function deleteService()
+    {
+        $id = $this->request->getPost('id');
+
+        $res = $this->gM->deleteData('service', $id);
+        if ($res) {
+            return $this->response->setJSON(['status' => 'success']);
+        } else {
+            return $this->response->setJSON(['error' => 'error']);
+        }
+    }
+
+    public function servicetogglestatus()
+    {
+        $id = $this->request->getPost('id');
+        $sts = $this->request->getPost('status');
+
+        if ($sts == 'active') {
+            $status = '0';
+        } else {
+            $status = '1';
+        }
+
+        $res = $this->gM->updateStatus('service', $id, $status);
+        if ($res) {
+            return $this->response->setJSON(['status' => $status]);
+        } else {
+            return $this->response->setJSON(['error' => 'Something went wrong!']);
+        }
+    }
+
+    public function eservicedata()
+    {
+        $id = $this->request->getPost('id');
+        $q = $this->gM->getRow('service', $id);
+
+        if ($q) {
+            return $this->response->setJSON(['status' => 'success', 'message' => $q]);
+        } else {
+            return $this->response->setJSON(['error' => 'error', 'message' => 'Unable to Fetch Data for this Id!']);
+        }
+    }
+
+    public function updateServiceData()
+    {
+        $validation = $this->validate([
+            'esrvc' => 'required|regex_match[/^[a-zA-Z0-9\s]+$/]',
+            'edept' => 'required',
+        ]);
+        if (!$validation) {
+            $validation = \Config\Services::validation();
+            $errors = $validation->getErrors();
+            $message = ['status' => 'error', 'data' => 'Validate form', 'errors' => $errors];
+            return $this->response->setJSON($message);
+        } else {
+            $id = trim($this->request->getPost('id'));
+            $esrvc = trim($this->request->getPost('esrvc'));
+            $edpt = trim($this->request->getPost('edept'));
+
+            $data = array();
+            $data['service'] = ucwords(esc($esrvc));
+            $data['department'] = esc($edpt);
+            $data['updated_at'] = date('Y-m-d H:i:s');
+
+            $Q = $this->gM->updateDepartment("service", $id, $data);
+            if ($Q) {
+                $response = ['status' => 'success', 'message' => 'Service Data Updated Successfully!'];
+            } else {
+                $response = ['status' => 'error', 'message' => 'Something went wrong!'];
+            }
+            return $this->response->setJSON($response);
         }
     }
 }

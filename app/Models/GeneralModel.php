@@ -21,6 +21,13 @@ class GeneralModel extends Model
     {
         return $this->db->table($table);
     }
+    function getRespData($table)
+    {
+        return $this->db->table($table)
+            ->select('raised_tickets.*, service.service, ticket_status.tkt_status AS tkt_status')
+            ->join('service', 'service.id = raised_tickets.issue', 'left')
+            ->join('ticket_status', 'ticket_status.id = raised_tickets.status_id', 'left');
+    }
 
     function countData($table)
     {
@@ -41,6 +48,15 @@ class GeneralModel extends Model
         $builder = $this->db->table($table);
         $builder->groupStart()
             ->orLike('service', $searchValue)
+            ->groupEnd();
+        return $builder->countAllResults();
+    }
+    function countFilteredTckts($table, $searchValue)
+    {
+        $builder = $this->db->table($table);
+        $builder->groupStart()
+            ->orLike('tkt_id', $searchValue)
+            ->orLike('priority', $searchValue)
             ->groupEnd();
         return $builder->countAllResults();
     }
@@ -92,6 +108,31 @@ class GeneralModel extends Model
     function getTableData($table)
     {
         $builder = $this->db->table($table);
-        return $builder->get()->getResult();
+        return $builder->where('is_active', 1)->get()->getResult();
     }
+
+    public function getLastID($table, $prefix)
+    {
+        $builder = $this->db->table($table);
+        $builder->select('MAX(tkt_id) as max_id');
+        $builder->like('tkt_id', $prefix, 'after');
+        $query = $builder->get();
+        $lastId = $query->getRow()->max_id;
+
+        if ($lastId) {
+            $lastNumber = (int) str_replace($prefix, '', $lastId);
+            $newNumber = $lastNumber + 1;
+            return $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+        } else {
+            return $prefix . "0001";
+        }
+    }
+
+    function updateTicket($table, $where, $data)
+    {
+        $builder = $this->db->table($table);
+        $builder->where('status_id', esc($where));
+        return $builder->update($data);
+    }
+
 }

@@ -138,7 +138,7 @@
                                 <li class="sidebar-item">
                                     <a href="<?= base_url('superadmin/addService') ?>" class="sidebar-link">
                                         <i class="mdi mdi-adjust"></i>
-                                        <span class="hide-menu"> Add Services </span>
+                                        <span class="hide-menu"> Add Category </span>
                                     </a>
                                 </li>
                             </ul>
