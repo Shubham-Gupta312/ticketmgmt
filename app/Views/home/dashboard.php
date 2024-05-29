@@ -374,7 +374,6 @@
           url: "<?= base_url('home/updateStatus') ?>",
           data: formData,
           success: function (response) {
-            // console.log(response);
             if (response.status == 'success') {
               $.notify(response.message, "success");
               table.ajax.reload();

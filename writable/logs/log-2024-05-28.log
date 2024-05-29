@@ -1,0 +1,10 @@
+CRITICAL - 2024-05-28 10:25:42 --> ErrorException: Undefined array key "name"
+[Method: POST, Route: home/toggleButton]
+in APPPATH\Controllers\Home.php on line 255.
+ 1 APPPATH\Controllers\Home.php(255): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "name"', 'C:\\xampp\\htdocs\\ticket-system\\app\\Controllers\\Home.php', 255)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->toggleButton()
+ 3 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 4 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(325): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

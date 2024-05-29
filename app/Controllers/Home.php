@@ -166,19 +166,34 @@ class Home extends BaseController
             $totalFilteredRecords = !empty($searchValue) ? $this->gM->countFilteredTckts('raised_tickets', $searchValue) : $totalRecords;
 
             $associativeArray = array_map(function ($row) {
-
+                if ($row['tkt_status'] === 'Resolved') {
+                    $stColor = 'btn btn-outline-success';
+                    $btn = 'fas fa-check-circle';
+                    $btnColor = 'btn btn-success';
+                    $dsb = 'disabled';
+                } elseif ($row['tkt_status'] === 'In-Progress') {
+                    $stColor = 'btn btn-outline-warning';
+                    $btn = 'fas fa-arrow-alt-circle-up';
+                    $btnColor = 'btn btn-outline-info';
+                    $dsb = '';
+                } else {
+                    $stColor = 'btn btn-outline-danger';
+                    $btn = 'fas fa-arrow-alt-circle-up';
+                    $btnColor = 'btn btn-outline-info';
+                    $dsb = '';
+                }
                 return [
                     0 => $row['id'],
                     1 => $row['tkt_id'],
                     2 => $row['service'],
                     3 => $row['raised_by'],
                     4 => $row['priority'],
-                    5 => !empty ($row['attachment']) ? '<a href="' . base_url($row['attachment']) . '" target="_blank">View Attachment</a>' : '',
+                    5 => !empty($row['attachment']) ? '<a href="' . base_url($row['attachment']) . '" target="_blank">View Attachment</a>' : '',
                     6 => $row['msg'],
-                    7 => '<button class="btn btn-outline-danger" style="width:80px!important;text-align:center!important;font-size:12px!important">' . $row['tkt_status'] . '</button>',
+                    7 => '<button class="btn ' . $stColor . '" id="sts" style="width:80px!important;text-align:center!important;font-size:12px!important">' . $row['tkt_status'] . '</button>',
                     8 => $row['tkt_raised_date'],
                     9 => $row['tkt_closed_date'] == '0000-00-00 00:00:00' ? '' : $row['tkt_closed_date'],
-                    10 => '<button class="btn btn-outline-info" id="edit" data-bs-toggle="modal" data-bs-target="#exampleModal" title="Update Status"><i class="fas fa-arrow-alt-circle-up"></i></button>',
+                    10 => '<button class="' . $btnColor . '" id="edit" data-bs-toggle="modal" data-bs-target="#exampleModal" title="Update Status" ' . $dsb . '><i class="' . $btn . '"></i></button>',
 
                 ];
             }, $data);
