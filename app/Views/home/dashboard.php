@@ -209,180 +209,243 @@
       </div>
     </div>
 
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover" id="RaisedTicketTable">
-        <thead>
-          <tr>
-            <th scope="col">Sl.no</th>
-            <th scope="col">Ticket Id</th>
-            <th scope="col">Issue</th>
-            <th scope="col">Raised By</th>
-            <th scope="col">Priority</th>
-            <th scope="col">Attachement</th>
-            <th scope="col">Message</th>
-            <th scope="col">Ticket Status</th>
-            <th scope="col">Ticket Raised Date</th>
-            <th scope="col">Ticket Closed Date</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-    </div>
+    <ul class="nav nav-tabs">
+      <li class="active m-2"><a data-toggle="tab" href="#home">All Raised Tickets</a></li>
+      <li class="m-2"><a data-toggle="tab" href="#menu1">Raised Tickets By Departments</a></li>
+    </ul>
 
+    <div class="tab-content">
+      <div id="home" class="tab-pane in active">
+        <div class="table-responsive mt-3">
+          <table class="table table-bordered table-hover" id="RaisedTicketTable">
+            <thead>
+              <tr>
+                <th scope="col">Sl.no</th>
+                <th scope="col">Ticket Id</th>
+                <th scope="col">Issue</th>
+                <th scope="col">Raised By</th>
+                <th scope="col">Priority</th>
+                <th scope="col">Attachement</th>
+                <th scope="col">Message</th>
+                <th scope="col">Ticket Status</th>
+                <th scope="col">Ticket Raised Date</th>
+                <th scope="col">Ticket Closed Date</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="menu1" class="tab-pane fade">
+        <div class="table-responsive mt-3">
+          <table class="table table-bordered table-hover" id="RaisedTicketMeTable">
+            <thead>
+              <tr>
+                <th scope="col">Sl.no</th>
+                <th scope="col">Ticket Id</th>
+                <th scope="col">Issue</th>
+                <th scope="col">Raised By</th>
+                <th scope="col">Priority</th>
+                <th scope="col">Attachement</th>
+                <th scope="col">Message</th>
+                <th scope="col">Ticket Status</th>
+                <th scope="col">Ticket Raised Date</th>
+                <th scope="col">Ticket Closed Date</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <?= $this->endSection() ?>
-  <?= $this->section('customjs'); ?>
-  <script>
-    $(document).ready(function () {
-      $('body').on('keyup', ".onlyalphanum", function (event) {
-        this.value = this.value.replace(/[^[A-Za-z0-9 ]]*/gi, '');
-      });
-      $('body').on('keyup', ".anum", function (event) {
-        this.value = this.value.replace(/[^[A-Za-z0-9., ]]*/gi, '');
-      });
 
-      $('#raisedTckt').click(function (e) {
-        $('.block_container').show();
-      });
 
-      jQuery(document).ready(function (e) {
-        $('#RaisedTicketForm').bootstrapValidator({
-          fields: {
-            'issue': {
-              validators: {
-                notEmpty: {
-                  message: "Please select Issue"
-                },
-              }
-            },
-            'name': {
-              validators: {
-                notEmpty: {
-                  message: "Please enter your Name."
-                },
-              }
-            },
-            'priority': {
-              validators: {
-                notEmpty: {
-                  message: "Please select Priority."
-                },
-              }
-            },
-            'attachment': {
-              validators: {
-                file: {
-                  extension: 'jpeg,jpg,png',
-                  type: 'image/jpeg,image/png',
-                  maxSize: 2 * 1024 * 1024,
-                  message: 'The selected file is not valid or exceeds 2 MB in size',
-                },
-              }
-            },
-          },
-        }).on('success.form.bv', function (e) {
-          e.preventDefault();
-          var $form = $(e.target);
-          var bv = $form.data('bootstrapValidator');
-          var formData = new FormData($form[0]);
-          // console.log(formData);
-          $.ajax({
-            url: "<?= base_url('home/dashboard') ?>",
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-              // console.log(response);
-              $('input').removeClass('is-invalid');
-              if (response.status === 'success') {
-                $form[0].reset();
-                $.notify(response.message, "success");
-                $('.block_container').hide();
-                table.ajax.reload();
-              } else {
-                let error = response.errors;
-                for (const key in error) {
-                  document.getElementById(key).classList.add('is-invalid');
-                  document.getElementById(key + '_msg').innerHTML = error[key];
-                }
-                $.notify(response.message, "error");
-              }
-            },
-            error: function (xhr, status, error) {
-              // Handle error
-              console.error(error);
+</div>
+
+<?= $this->endSection() ?>
+<?= $this->section('customjs'); ?>
+<script>
+  $(document).ready(function () {
+    $('body').on('keyup', ".onlyalphanum", function (event) {
+      this.value = this.value.replace(/[^[A-Za-z0-9 ]]*/gi, '');
+    });
+    $('body').on('keyup', ".anum", function (event) {
+      this.value = this.value.replace(/[^[A-Za-z0-9., ]]*/gi, '');
+    });
+
+    $('#raisedTckt').click(function (e) {
+      $('.block_container').show();
+    });
+
+    jQuery(document).ready(function (e) {
+      $('#RaisedTicketForm').bootstrapValidator({
+        fields: {
+          'issue': {
+            validators: {
+              notEmpty: {
+                message: "Please select Issue"
+              },
             }
-          });
-        });
-      });
-
-      var table = $('#RaisedTicketTable').DataTable({
-        processing: true,
-        serverSide: true,
-        paging: true,
-        order: [[1, 'desc']],
-        "fnCreatedRow": function (row, data, index) {
-          var pageInfo = table.page.info();
-          var currentPage = pageInfo.page;
-          var pageLength = pageInfo.length;
-          var rowNumber = index + 1 + (currentPage * pageLength);
-          $('td', row).eq(0).html(rowNumber);
+          },
+          'name': {
+            validators: {
+              notEmpty: {
+                message: "Please enter your Name."
+              },
+            }
+          },
+          'priority': {
+            validators: {
+              notEmpty: {
+                message: "Please select Priority."
+              },
+            }
+          },
+          'attachment': {
+            validators: {
+              file: {
+                extension: 'jpeg,jpg,png',
+                type: 'image/jpeg,image/png',
+                maxSize: 2 * 1024 * 1024,
+                message: 'The selected file is not valid or exceeds 2 MB in size',
+              },
+            }
+          },
         },
-        columnDefs: [
-          { targets: [0, 3], orderable: false }
-        ],
-        ajax: {
-          url: "<?= base_url('home/raisedTickets') ?>",
-          type: "GET",
-          error: function (xhr, error, thrown) {
-            // console.log("AJAX error:", xhr, error, thrown);
-          }
-        },
-        drawCallback: function (settings) {
-          // console.log('Table redrawn:', settings);
-        }
-      });
-
-      $(document).on('click', '#edit', function (e) {
+      }).on('success.form.bv', function (e) {
         e.preventDefault();
-        var button = $(this);
-        var data = table.row(button.closest('tr')).data();
-        var id = data[0];
-
+        var $form = $(e.target);
+        var bv = $form.data('bootstrapValidator');
+        var formData = new FormData($form[0]);
+        // console.log(formData);
         $.ajax({
-          method: "POST",
-          url: "<?= base_url('home/getRaisedData') ?>",
-          data: { 'id': id },
+          url: "<?= base_url('home/dashboard') ?>",
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
           success: function (response) {
             // console.log(response);
-            if (response.message.status_id) {
-              var sid = response.message.status_id;
-              $('#id').val(sid);
-            }
-          }
-        });
-      });
-
-      $(document).on('click', '#update', function () {
-        var formData = $('#StatusId').serialize();
-        $.ajax({
-          method: "POST",
-          url: "<?= base_url('home/updateStatus') ?>",
-          data: formData,
-          success: function (response) {
-            if (response.status == 'success') {
+            $('input').removeClass('is-invalid');
+            if (response.status === 'success') {
+              $form[0].reset();
               $.notify(response.message, "success");
+              $('.block_container').hide();
               table.ajax.reload();
-              $('#exampleModal').modal('hide');
+            } else {
+              let error = response.errors;
+              for (const key in error) {
+                document.getElementById(key).classList.add('is-invalid');
+                document.getElementById(key + '_msg').innerHTML = error[key];
+              }
+              $.notify(response.message, "error");
             }
+          },
+          error: function (xhr, status, error) {
+            // Handle error
+            console.error(error);
           }
         });
       });
-
     });
-  </script>
-  <?= $this->endSection() ?>
+
+    var table = $('#RaisedTicketTable').DataTable({
+      processing: true,
+      serverSide: true,
+      paging: true,
+      order: [[1, 'desc']],
+      "fnCreatedRow": function (row, data, index) {
+        var pageInfo = table.page.info();
+        var currentPage = pageInfo.page;
+        var pageLength = pageInfo.length;
+        var rowNumber = index + 1 + (currentPage * pageLength);
+        $('td', row).eq(0).html(rowNumber);
+      },
+      columnDefs: [
+        { targets: [0, 10], orderable: false }
+      ],
+      ajax: {
+        url: "<?= base_url('home/raisedTickets') ?>",
+        type: "GET",
+        error: function (xhr, error, thrown) {
+          // console.log("AJAX error:", xhr, error, thrown);
+        }
+      },
+      drawCallback: function (settings) {
+        // console.log('Table redrawn:', settings);
+      }
+    });
+
+
+    var table = $('#RaisedTicketMeTable').DataTable({
+      processing: true,
+      serverSide: true,
+      paging: true,
+      order: [[1, 'desc']],
+      "fnCreatedRow": function (row, data, index) {
+        var pageInfo = table.page.info();
+        var currentPage = pageInfo.page;
+        var pageLength = pageInfo.length;
+        var rowNumber = index + 1 + (currentPage * pageLength);
+        $('td', row).eq(0).html(rowNumber);
+      },
+      columnDefs: [
+        { targets: [0, 10], orderable: false }
+      ],
+      ajax: {
+        url: "<?= base_url('home/getRaisedDatabyDept') ?>",
+        type: "GET",
+        error: function (xhr, error, thrown) {
+          // console.log("AJAX error:", xhr, error, thrown);
+        }
+      },
+      drawCallback: function (settings) {
+        // console.log('Table redrawn:', settings);
+      }
+    });
+
+    $(document).on('click', '#edit', function (e) {
+      e.preventDefault();
+      var button = $(this);
+      var data = table.row(button.closest('tr')).data();
+      var id = data[0];
+
+      $.ajax({
+        method: "POST",
+        url: "<?= base_url('home/getRaisedData') ?>",
+        data: { 'id': id },
+        success: function (response) {
+          // console.log(response);
+          if (response.message.status_id) {
+            var sid = response.message.status_id;
+            $('#id').val(sid);
+          }
+        }
+      });
+    });
+
+    $(document).on('click', '#update', function () {
+      var formData = $('#StatusId').serialize();
+      $.ajax({
+        method: "POST",
+        url: "<?= base_url('home/updateStatus') ?>",
+        data: formData,
+        success: function (response) {
+          if (response.status == 'success') {
+            $.notify(response.message, "success");
+            table.ajax.reload();
+            $('#exampleModal').modal('hide');
+          }
+        }
+      });
+    });
+
+  });
+</script>
+<?= $this->endSection() ?>

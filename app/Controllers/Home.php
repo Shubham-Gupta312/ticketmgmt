@@ -89,6 +89,7 @@ class Home extends BaseController
                 $prt = trim($this->request->getPost('priority'));
                 $atch = $this->request->getFile('attachment');
                 $msg = trim($this->request->getPost('msg'));
+                $userData = session()->get('username');
 
                 $prefix = "RMH-";
                 $tktId = $this->gM->getLastID('raised_tickets', $prefix);
@@ -115,6 +116,7 @@ class Home extends BaseController
                         'priority' => ucwords(esc($prt)),
                         'attachment' => $path,
                         'msg' => esc($msg),
+                        'raised_by_dept' => esc($userData),
                         'status_id' => $statusId,
                         'tkt_raised_date' => date('Y-m-d H:i:s'),
                     ];
@@ -191,8 +193,85 @@ class Home extends BaseController
                     5 => !empty($row['attachment']) ? '<a href="' . base_url($row['attachment']) . '" target="_blank">View Attachment</a>' : '',
                     6 => $row['msg'],
                     7 => '<button class="btn ' . $stColor . '" id="sts" style="width:80px!important;text-align:center!important;font-size:12px!important">' . $row['tkt_status'] . '</button>',
-                    8 => $row['tkt_raised_date'],
-                    9 => $row['tkt_closed_date'] == '0000-00-00 00:00:00' ? '' : $row['tkt_closed_date'],
+                    8 => date('d-m-Y H:i:s', strtotime($row['tkt_raised_date'])),
+                    9 => $row['tkt_closed_date'] == '0000-00-00 00:00:00' ? '' : date('d-m-Y H:i:s', strtotime($row['tkt_closed_date'])),
+                    10 => '<button class="' . $btnColor . '" id="edit" data-bs-toggle="modal" data-bs-target="#exampleModal" title="Update Status" ' . $dsb . '><i class="' . $btn . '"></i></button>',
+
+                ];
+            }, $data);
+
+            $output = [
+                'draw' => intval($draw),
+                'recordsTotal' => $totalRecords,
+                'recordsFiltered' => $totalFilteredRecords,
+                'data' => $associativeArray
+            ];
+
+            return $this->response->setJSON($output);
+
+        } catch (\Exception $e) {
+            // Handle exception if something goes wrong
+            echo 'Error: ' . $e->getMessage();
+        }
+    }
+
+    public function getRaisedDatabyDept()
+    {
+        try {
+            $draw = $_GET['draw'] ?? 1;
+            $start = $_GET['start'] ?? 0;
+            $length = $_GET['length'] ?? 10;
+            $searchValue = $_GET['search']['value'] ?? '';
+            $orderColumnIndex = $_GET['order'][0]['column'] ?? 0;
+            $orderColumnName = $_GET['columns'][$orderColumnIndex]['data'] ?? 'id';
+            $orderDir = $_GET['order'][0]['dir'] ?? 'asc';
+
+            $dept = session()->get('username');
+
+            $dt = $this->gM->getRespDeptData('raised_tickets', $dept);
+
+            if (!empty($searchValue)) {
+                $dt->groupStart()
+                    ->orLike('tkt_id', $searchValue)
+                    ->orLike('priority', $searchValue)
+                    ->groupEnd();
+            }
+
+            $dt->orderBy($orderColumnName, $orderDir);
+
+            $data = $dt->get($length, $start)->getResultArray();
+
+            $totalRecords = $this->gM->countData('raised_tickets');
+            $totalFilteredRecords = !empty($searchValue) ? $this->gM->countFilteredTckts('raised_tickets', $searchValue) : $totalRecords;
+
+            $associativeArray = array_map(function ($row) {
+                if ($row['tkt_status'] === 'Resolved') {
+                    $stColor = 'btn btn-outline-success';
+                    $btn = 'fas fa-check-circle';
+                    $btnColor = 'btn btn-success';
+                    $dsb = 'disabled';
+                } elseif ($row['tkt_status'] === 'In-Progress') {
+                    $stColor = 'btn btn-outline-warning';
+                    $btn = 'fas fa-arrow-alt-circle-up';
+                    $btnColor = 'btn btn-outline-info';
+                    $dsb = '';
+                } else {
+                    $stColor = 'btn btn-outline-danger';
+                    $btn = 'fas fa-arrow-alt-circle-up';
+                    $btnColor = 'btn btn-outline-info';
+                    $dsb = '';
+                }
+                return [
+                    0 => $row['id'],
+                    1 => $row['tkt_id'],
+                    2 => $row['service'],
+                    3 => $row['raised_by'],
+                    4 => $row['priority'],
+                    5 => !empty($row['attachment']) ? '<a href="' . base_url($row['attachment']) . '" target="_blank">View Attachment</a>' : '',
+                    6 => $row['msg'],
+                    7 => '<button class="btn ' . $stColor . '" id="sts" style="width:80px!important;text-align:center!important;font-size:12px!important">' . $row['tkt_status'] . '</button>',
+                    8 => date('d-m-Y H:i:s', strtotime($row['tkt_raised_date'])),
+                    9 => $row['tkt_closed_date'] == '0000-00-00 00:00:00' ? '' : date('d-m-Y H:i:s', strtotime($row['tkt_closed_date'])),
                     10 => '<button class="' . $btnColor . '" id="edit" data-bs-toggle="modal" data-bs-target="#exampleModal" title="Update Status" ' . $dsb . '><i class="' . $btn . '"></i></button>',
 
                 ];

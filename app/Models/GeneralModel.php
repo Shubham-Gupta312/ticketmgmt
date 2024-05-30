@@ -28,6 +28,19 @@ class GeneralModel extends Model
             ->join('service', 'service.id = raised_tickets.issue', 'left')
             ->join('ticket_status', 'ticket_status.id = raised_tickets.status_id', 'left');
     }
+    function getRespDeptData($table, $dept = null)
+    {
+        $query = $this->db->table($table)
+            ->select('raised_tickets.*, service.service, ticket_status.tkt_status AS tkt_status')
+            ->join('service', 'service.id = raised_tickets.issue', 'left')
+            ->join('ticket_status', 'ticket_status.id = raised_tickets.status_id', 'left');
+
+        if ($dept) {
+            $query->where('raised_tickets.raised_by_dept', $dept);
+        }
+
+        return $query;
+    }
 
     function countData($table)
     {
