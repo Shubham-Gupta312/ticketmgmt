@@ -452,4 +452,69 @@ class Superadmin extends BaseController
             return $this->response->setJSON($response);
         }
     }
+
+    public function fetchalltickets()
+    {
+        try {
+            $draw = $_GET['draw'] ?? 1;
+            $start = $_GET['start'] ?? 0;
+            $length = $_GET['length'] ?? 10;
+            $searchValue = $_GET['search']['value'] ?? '';
+            $orderColumnIndex = $_GET['order'][0]['column'] ?? 0;
+            $orderColumnName = $_GET['columns'][$orderColumnIndex]['data'] ?? 'id';
+            $orderDir = $_GET['order'][0]['dir'] ?? 'asc';
+
+
+            $dt = $this->gM->getRespData('raised_tickets');
+
+            if (!empty($searchValue)) {
+                $dt->groupStart()
+                    ->orLike('tkt_id', $searchValue)
+                    ->orLike('priority', $searchValue)
+                    ->groupEnd();
+            }
+
+            $dt->orderBy($orderColumnName, $orderDir);
+
+            $data = $dt->get($length, $start)->getResultArray();
+
+            $totalRecords = $this->gM->countData('raised_tickets');
+            $totalFilteredRecords = !empty($searchValue) ? $this->gM->countFilteredTckts('raised_tickets', $searchValue) : $totalRecords;
+
+            $associativeArray = array_map(function ($row) {
+                if ($row['tkt_status'] === 'Resolved') {
+                    $stColor = 'btn btn-outline-success';
+                } elseif ($row['tkt_status'] === 'In-Progress') {
+                    $stColor = 'btn btn-outline-warning';
+                } else {
+                    $stColor = 'btn btn-outline-danger';
+                }
+                return [
+                    0 => $row['id'],
+                    1 => $row['tkt_id'],
+                    2 => $row['service'],
+                    3 => $row['raised_by'],
+                    4 => $row['priority'],
+                    5 => !empty($row['attachment']) ? '<a href="' . base_url($row['attachment']) . '" target="_blank">View Attachment</a>' : '',
+                    6 => $row['msg'],
+                    7 => '<button class="btn ' . $stColor . '" id="sts" style="width:80px!important;text-align:center!important;font-size:12px!important">' . $row['tkt_status'] . '</button>',
+                    8 => date('d-m-Y H:i:s', strtotime($row['tkt_raised_date'])),
+                    9 => $row['tkt_closed_date'] == '0000-00-00 00:00:00' ? '' : date('d-m-Y H:i:s', strtotime($row['tkt_closed_date'])),
+                ];
+            }, $data);
+
+            $output = [
+                'draw' => intval($draw),
+                'recordsTotal' => $totalRecords,
+                'recordsFiltered' => $totalFilteredRecords,
+                'data' => $associativeArray
+            ];
+
+            return $this->response->setJSON($output);
+
+        } catch (\Exception $e) {
+            // Handle exception if something goes wrong
+            echo 'Error: ' . $e->getMessage();
+        }
+    }
 }

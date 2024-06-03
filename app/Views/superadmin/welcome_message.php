@@ -97,15 +97,16 @@
     </div>
 
     <div class="table-responsive">
-      <table class="table table-bordered table-hover" id="RaisedTickets">
+      <table class="table table-bordered table-hover" id="AllRaisedTickets">
         <thead>
           <tr>
             <th scope="col">Sl.no</th>
             <th scope="col">Ticket Id</th>
-            <th scope="col">Raised By</th>
             <th scope="col">Issue</th>
-            <th scope="col">Message</th>
+            <th scope="col">Raised By</th>
+            <th scope="col">Priority</th>
             <th scope="col">Attachement</th>
+            <th scope="col">Message</th>
             <th scope="col">Ticket Status</th>
             <th scope="col">Ticket Raised Date</th>
             <th scope="col">Ticket Closed Date</th>
@@ -120,5 +121,35 @@
 
   <?= $this->endSection() ?>
   <?= $this->section('customjs'); ?>
+  <script>
+    $(document).ready(function () {
+      var table = $('#AllRaisedTickets').DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true,
+        order: [[1, 'desc']],
+        "fnCreatedRow": function (row, data, index) {
+          var pageInfo = table.page.info();
+          var currentPage = pageInfo.page;
+          var pageLength = pageInfo.length;
+          var rowNumber = index + 1 + (currentPage * pageLength);
+          $('td', row).eq(0).html(rowNumber);
+        },
+        columnDefs: [
+          { targets: [0, 7], orderable: false }
+        ],
+        ajax: {
+          url: "<?= base_url('superadmin/fetchalltickets') ?>",
+          type: "GET",
+          error: function (xhr, error, thrown) {
+            // console.log("AJAX error:", xhr, error, thrown);
+          }
+        },
+        drawCallback: function (settings) {
+          // console.log('Table redrawn:', settings);
+        }
+      });
+    });
+  </script>
 
   <?= $this->endSection() ?>
