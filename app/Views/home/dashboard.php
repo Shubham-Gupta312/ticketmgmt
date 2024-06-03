@@ -474,6 +474,14 @@
       });
     });
 
+    // $.ajax({
+    //   method: "GET",
+    //   url: "<?= base_url('home/notification') ?>",
+    //   success: function (response) {
+    //     console.log(response);
+    //   }
+    // });
+
   });
 </script>
 <?= $this->endSection() ?>

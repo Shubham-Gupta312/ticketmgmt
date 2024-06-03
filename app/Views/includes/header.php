@@ -59,7 +59,38 @@
                 <!-- Right side toggle and nav items -->
                 <!-- ============================================================== -->
                 <ul class="navbar-nav float-right">
-                    <!-- Profile -->
+                    <!-- Message -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" id="2"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i
+                                class="mdi mdi-email"></i>
+                            <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+                        </a>
+                        <div class="dropdown-menu mailbox dropdown-menu-right scale-up" aria-labelledby="2">
+                            <ul class="list-style-none">
+                                <li>
+                                    <div class="border-bottom rounded-top py-3 px-4">
+                                        <h5 class="font-weight-medium mb-0">You have 4 new messages</h5>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="message-center message-body position-relative ps-container ps-theme-default ps-active-y"
+                                        style="height:250px;" data-ps-id="8092654f-c437-8382-15c1-5da9c44cc4d7">
+                                        <!-- Message -->
+                                        <a href="javascript:void(0)"
+                                            class="message-item d-flex align-items-center border-bottom px-3 py-2">
+                                            <div class="w-75 d-inline-block v-middle pl-2">
+                                                <h5 class="message-title mb-0 mt-1">Pavan kumar</h5> <span
+                                                    class="font-12 text-nowrap d-block text-muted text-truncate">Just
+                                                    see the my admin!</span> <span
+                                                    class="font-12 text-nowrap d-block text-muted">9:30 AM</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                     <!-- ============================================================== -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown"

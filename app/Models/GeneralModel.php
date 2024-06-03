@@ -152,4 +152,14 @@ class GeneralModel extends Model
         return $builder->update($data);
     }
 
+    // function getNotificationData($table, $where)
+    // {
+    //     $builder = $this->db->table($table);
+    //     $builder->where('raised_by_dept', esc($where));
+    //     $builder->where('is_notified', '0');
+    //     $query = $builder->get();
+
+    //     return $query->getResult();
+    // }
+
 }

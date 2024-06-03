@@ -2,6 +2,10 @@
 
 namespace App\Controllers;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+
 date_default_timezone_set('Asia/Kolkata');
 use App\Libraries\EncPass;
 
@@ -464,6 +468,11 @@ class Superadmin extends BaseController
             $orderColumnName = $_GET['columns'][$orderColumnIndex]['data'] ?? 'id';
             $orderDir = $_GET['order'][0]['dir'] ?? 'asc';
 
+            $nm = $this->request->getGet('dept');
+            $prt = $this->request->getGet('priority');
+            $sts = $this->request->getGet('status');
+            $frm = $this->request->getGet('from');
+            $to = $this->request->getGet('to');
 
             $dt = $this->gM->getRespData('raised_tickets');
 
@@ -472,6 +481,22 @@ class Superadmin extends BaseController
                     ->orLike('tkt_id', $searchValue)
                     ->orLike('priority', $searchValue)
                     ->groupEnd();
+            }
+
+            if (!empty($nm)) {
+                $dt->where('raised_by_dept', $nm);
+            }
+            if (!empty($prt)) {
+                $dt->where('priority', $prt);
+            }
+            if (!empty($frm)) {
+                $dt->where('DATE(tkt_raised_date) >=', $frm);
+            }
+            if (!empty($to)) {
+                $dt->where('DATE(tkt_closed_date) <=', $to);
+            }
+            if (!empty($sts)) {
+                $dt->where('tkt_status', $sts);
             }
 
             $dt->orderBy($orderColumnName, $orderDir);
@@ -492,14 +517,15 @@ class Superadmin extends BaseController
                 return [
                     0 => $row['id'],
                     1 => $row['tkt_id'],
-                    2 => $row['service'],
-                    3 => $row['raised_by'],
-                    4 => $row['priority'],
-                    5 => !empty($row['attachment']) ? '<a href="' . base_url($row['attachment']) . '" target="_blank">View Attachment</a>' : '',
-                    6 => $row['msg'],
-                    7 => '<button class="btn ' . $stColor . '" id="sts" style="width:80px!important;text-align:center!important;font-size:12px!important">' . $row['tkt_status'] . '</button>',
-                    8 => date('d-m-Y H:i:s', strtotime($row['tkt_raised_date'])),
-                    9 => $row['tkt_closed_date'] == '0000-00-00 00:00:00' ? '' : date('d-m-Y H:i:s', strtotime($row['tkt_closed_date'])),
+                    2 => ucfirst($row['raised_by_dept']),
+                    3 => $row['service'],
+                    4 => $row['raised_by'],
+                    5 => $row['priority'],
+                    6 => !empty($row['attachment']) ? '<a href="' . base_url($row['attachment']) . '" target="_blank">View Attachment</a>' : '',
+                    7 => $row['msg'],
+                    8 => '<button class="btn ' . $stColor . '" id="sts" style="width:80px!important;text-align:center!important;font-size:12px!important">' . $row['tkt_status'] . '</button>',
+                    9 => date('d-m-Y H:i:s', strtotime($row['tkt_raised_date'])),
+                    10 => $row['tkt_closed_date'] == '0000-00-00 00:00:00' ? '' : date('d-m-Y H:i:s', strtotime($row['tkt_closed_date'])),
                 ];
             }, $data);
 
@@ -517,4 +543,97 @@ class Superadmin extends BaseController
             echo 'Error: ' . $e->getMessage();
         }
     }
+
+    public function downloadReport()
+    {
+        $md = new \App\Models\SuperadminModel();
+        $data = $md->getTableData('raised_tickets');
+
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue("A1", "Rangadore Memorial Hospital Ticket Management System");
+        $sheet->setCellValue("A2", "Date:");
+
+        $style = [
+            'font' => [
+                'bold' => true,
+            ],
+        ];
+
+        $sheet->getStyle('A1')->applyFromArray($style);
+        $sheet->getStyle('A2')->applyFromArray($style);
+
+        $sheet->getColumnDimension('A')->setWidth(15);
+        $sheet->getColumnDimension('B')->setWidth(20);
+        $sheet->getColumnDimension('C')->setWidth(15);
+        $sheet->getColumnDimension('D')->setWidth(15);
+        $sheet->getColumnDimension('E')->setWidth(15);
+        $sheet->getColumnDimension('F')->setWidth(15);
+        $sheet->getColumnDimension('G')->setWidth(15);
+        $sheet->getColumnDimension('H')->setWidth(25);
+        $sheet->getColumnDimension('I')->setWidth(25);
+
+
+        $currentDate = date('d-m-Y H:i:s');
+        $sheet->setCellValue("B2", $currentDate);
+
+        if (!empty($data)) {
+            $sheet->setCellValue("A4", "Ticket-Id");
+            $sheet->setCellValue("B4", "Raised By Department");
+            $sheet->setCellValue("C4", "Issue");
+            $sheet->setCellValue("D4", "Raised By");
+            $sheet->setCellValue("E4", "Priority");
+            $sheet->setCellValue("F4", "Comments");
+            $sheet->setCellValue("G4", "Status");
+            $sheet->setCellValue("H4", "Ticket Raised Date");
+            $sheet->setCellValue("I4", "Ticket Close Date");
+
+            $sheet->getStyle('A4:I4')->applyFromArray($style);
+
+            $count = 5;
+            foreach ($data as $rowData) {
+                $sheet->setCellValue("A" . $count, isset($rowData['tkt_id']) ? $rowData['tkt_id'] : '');
+                $sheet->setCellValue("B" . $count, isset($rowData['raised_by_dept']) ? $rowData['raised_by_dept'] : '');
+                $sheet->setCellValue("C" . $count, isset($rowData['issue']) ? $rowData['issue'] : '');
+                $sheet->setCellValue("D" . $count, isset($rowData['raised_by']) ? $rowData['raised_by'] : '');
+                $sheet->setCellValue("E" . $count, isset($rowData['priority']) ? $rowData['priority'] : '');
+                $sheet->setCellValue("F" . $count, isset($rowData['msg']) ? $rowData['msg'] : '');
+                $sheet->setCellValue("G" . $count, isset($rowData['status_id']) ? $rowData['status_id'] : '');
+
+                if (!empty($rowData['tkt_raised_date']) && $rowData['tkt_raised_date'] !== '0000-00-00 00:00:00') {
+                    $sheet->setCellValue("H" . $count, date('d-m-Y H:i:s', strtotime($rowData['tkt_raised_date'])));
+                } else {
+                    $sheet->setCellValue("H" . $count, '');
+                }
+
+                if (!empty($rowData['tkt_closed_date']) && $rowData['tkt_closed_date'] !== '0000-00-00 00:00:00') {
+                    $sheet->setCellValue("I" . $count, date('d-m-Y H:i:s', strtotime($rowData['tkt_closed_date'])));
+                } else {
+                    $sheet->setCellValue("I" . $count, '');
+                }
+
+                $count++;
+            }
+        } else {
+            $sheet->setCellValue('A4', 'No data available');
+        }
+
+
+        $timestamp = date('Ymd_His');
+        $filename = "Employee-Data_" . $timestamp . ".xlsx";
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Expires: Fri, 01 Jan 1990 00:00:00 GMT');
+        header('Cache-Control: no-cache, must-revalidate');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
+
+
 }

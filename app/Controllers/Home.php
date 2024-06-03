@@ -89,6 +89,7 @@ class Home extends BaseController
                 $prt = trim($this->request->getPost('priority'));
                 $atch = $this->request->getFile('attachment');
                 $msg = trim($this->request->getPost('msg'));
+                
                 $userData = session()->get('username');
 
                 $prefix = "RMH-";
@@ -324,5 +325,14 @@ class Home extends BaseController
             return $this->response->setJSON($response);
         }
     }
+
+    // public function notification()
+    // {
+    //     $dept = session()->get('username');
+    //     $md = $this->gM->getNotificationData('raised_tickets', $dept);
+
+    //     echo "<pre>";
+    //     print_r($md);
+    // }
 
 }
