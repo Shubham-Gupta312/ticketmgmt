@@ -27,7 +27,30 @@
 
   .help-block {
     color: rgb(220, 56, 72);
-    ;
+  }
+
+  .nav-tabs>li {
+    margin-right: 5px;
+  }
+
+  .nav-tabs>li>a {
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+
+  .nav-tabs>li.active>a {
+    background-color: #007bff;
+    color: white !important;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .nav-tabs>li>a:hover {
+    background-color: #e9ecef;
+    color: #007bff !important;
   }
 </style>
 
@@ -210,8 +233,8 @@
     </div>
 
     <ul class="nav nav-tabs">
-      <li class="active m-2"><a data-toggle="tab" href="#home">All Raised Tickets</a></li>
-      <li class="m-2"><a data-toggle="tab" href="#menu1">Raised Tickets By Departments</a></li>
+      <li class="active m-2"><a data-toggle="tab" href="#home">Process Tickets</a></li>
+      <li class="m-2"><a data-toggle="tab" href="#menu1">Raised Tickets</a></li>
     </ul>
 
     <div class="tab-content">
@@ -253,7 +276,6 @@
                 <th scope="col">Ticket Status</th>
                 <th scope="col">Ticket Raised Date</th>
                 <th scope="col">Ticket Closed Date</th>
-                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -272,6 +294,12 @@
 <?= $this->section('customjs'); ?>
 <script>
   $(document).ready(function () {
+    // Toggle active tab
+    $('.nav-tabs a').on('show.bs.tab', function (event) {
+      var activeTab = $(event.target).parent();
+      activeTab.addClass('active').siblings().removeClass('active');
+    });
+
     $('body').on('keyup', ".onlyalphanum", function (event) {
       this.value = this.value.replace(/[^[A-Za-z0-9 ]]*/gi, '');
     });
@@ -396,10 +424,10 @@
         $('td', row).eq(0).html(rowNumber);
       },
       columnDefs: [
-        { targets: [0, 10], orderable: false }
+        { targets: [0, 7], orderable: false }
       ],
       ajax: {
-        url: "<?= base_url('home/getRaisedDatabyDept') ?>",
+        url: "<?= base_url('home/getRaisedTktbyDept') ?>",
         type: "GET",
         error: function (xhr, error, thrown) {
           // console.log("AJAX error:", xhr, error, thrown);

@@ -46,6 +46,10 @@ class GeneralModel extends Model
     {
         return $this->db->table($table)->countAllResults();
     }
+    function countDeptData($table, $where)
+    {
+        return $this->db->table($table)->where('raised_by_dept', $where)->countAllResults();
+    }
 
     function countFilteredData($table, $searchValue)
     {

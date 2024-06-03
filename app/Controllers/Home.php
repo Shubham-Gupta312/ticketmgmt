@@ -215,7 +215,7 @@ class Home extends BaseController
         }
     }
 
-    public function getRaisedDatabyDept()
+    public function getRaisedTktbyDept()
     {
         try {
             $draw = $_GET['draw'] ?? 1;
@@ -241,25 +241,16 @@ class Home extends BaseController
 
             $data = $dt->get($length, $start)->getResultArray();
 
-            $totalRecords = $this->gM->countData('raised_tickets');
+            $totalRecords = $this->gM->countDeptData('raised_tickets', $dept);
             $totalFilteredRecords = !empty($searchValue) ? $this->gM->countFilteredTckts('raised_tickets', $searchValue) : $totalRecords;
 
             $associativeArray = array_map(function ($row) {
                 if ($row['tkt_status'] === 'Resolved') {
                     $stColor = 'btn btn-outline-success';
-                    $btn = 'fas fa-check-circle';
-                    $btnColor = 'btn btn-success';
-                    $dsb = 'disabled';
                 } elseif ($row['tkt_status'] === 'In-Progress') {
                     $stColor = 'btn btn-outline-warning';
-                    $btn = 'fas fa-arrow-alt-circle-up';
-                    $btnColor = 'btn btn-outline-info';
-                    $dsb = '';
                 } else {
                     $stColor = 'btn btn-outline-danger';
-                    $btn = 'fas fa-arrow-alt-circle-up';
-                    $btnColor = 'btn btn-outline-info';
-                    $dsb = '';
                 }
                 return [
                     0 => $row['id'],
@@ -272,8 +263,6 @@ class Home extends BaseController
                     7 => '<button class="btn ' . $stColor . '" id="sts" style="width:80px!important;text-align:center!important;font-size:12px!important">' . $row['tkt_status'] . '</button>',
                     8 => date('d-m-Y H:i:s', strtotime($row['tkt_raised_date'])),
                     9 => $row['tkt_closed_date'] == '0000-00-00 00:00:00' ? '' : date('d-m-Y H:i:s', strtotime($row['tkt_closed_date'])),
-                    10 => '<button class="' . $btnColor . '" id="edit" data-bs-toggle="modal" data-bs-target="#exampleModal" title="Update Status" ' . $dsb . '><i class="' . $btn . '"></i></button>',
-
                 ];
             }, $data);
 
