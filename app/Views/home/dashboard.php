@@ -68,7 +68,7 @@
                 <i class="ti-wallet"></i>
               </div>
               <div class="ml-2 align-self-center">
-                <h3 class="mb-0 font-weight-light">9</h3>
+                <h3 class="mb-0 font-weight-light"><?php echo $tickets ? $tickets : '0' ?></h3>
                 <h5 class="text-muted mb-0">Total Tickets</h5>
               </div>
             </div>
@@ -85,7 +85,7 @@
                 <i class="mdi mdi-cellphone-link"></i>
               </div>
               <div class="ml-2 align-self-center">
-                <h3 class="mb-0 font-weight-light">3</h3>
+                <h3 class="mb-0 font-weight-light"><?php echo $todaytickets ? $todaytickets : '0' ?></h3>
                 <h5 class="text-muted mb-0">Today Tickets</h5>
               </div>
             </div>
@@ -102,7 +102,7 @@
                 <i class="mdi mdi-cart-outline"></i>
               </div>
               <div class="ml-2 align-self-center">
-                <h3 class="mb-0 font-weight-light">5</h3>
+                <h3 class="mb-0 font-weight-light"><?php echo $pendingtickets ? $pendingtickets : '0' ?></h3>
                 <h5 class="text-muted mb-0">In-Progress Tickets</h5>
               </div>
             </div>
@@ -119,7 +119,7 @@
                 <i class="mdi mdi-bullseye"></i>
               </div>
               <div class="ml-2 align-self-center">
-                <h3 class="mb-0 font-weight-light">4</h3>
+                <h3 class="mb-0 font-weight-light"><?php echo $resolvedtickets ? $resolvedtickets : '0' ?></h3>
                 <h5 class="text-muted mb-0">Resolved Tickets</h5>
               </div>
             </div>
@@ -383,6 +383,33 @@
       });
     });
 
+    var table = $('#RaisedTicketMeTable').DataTable({
+      processing: true,
+      serverSide: true,
+      paging: true,
+      order: [[1, 'desc']],
+      "fnCreatedRow": function (row, data, index) {
+        var pageInfo = table.page.info();
+        var currentPage = pageInfo.page;
+        var pageLength = pageInfo.length;
+        var rowNumber = index + 1 + (currentPage * pageLength);
+        $('td', row).eq(0).html(rowNumber);
+      },
+      columnDefs: [
+        { targets: [0, 7], orderable: false }
+      ],
+      ajax: {
+        url: "<?= base_url('home/getRaisedTktbyDept') ?>",
+        type: "GET",
+        error: function (xhr, error, thrown) {
+          // console.log("AJAX error:", xhr, error, thrown);
+        }
+      },
+      drawCallback: function (settings) {
+        // console.log('Table redrawn:', settings);
+      }
+    });
+
     var table = $('#RaisedTicketTable').DataTable({
       processing: true,
       serverSide: true,
@@ -410,33 +437,6 @@
       }
     });
 
-
-    var table = $('#RaisedTicketMeTable').DataTable({
-      processing: true,
-      serverSide: true,
-      paging: true,
-      order: [[1, 'desc']],
-      "fnCreatedRow": function (row, data, index) {
-        var pageInfo = table.page.info();
-        var currentPage = pageInfo.page;
-        var pageLength = pageInfo.length;
-        var rowNumber = index + 1 + (currentPage * pageLength);
-        $('td', row).eq(0).html(rowNumber);
-      },
-      columnDefs: [
-        { targets: [0, 7], orderable: false }
-      ],
-      ajax: {
-        url: "<?= base_url('home/getRaisedTktbyDept') ?>",
-        type: "GET",
-        error: function (xhr, error, thrown) {
-          // console.log("AJAX error:", xhr, error, thrown);
-        }
-      },
-      drawCallback: function (settings) {
-        // console.log('Table redrawn:', settings);
-      }
-    });
 
     $(document).on('click', '#edit', function (e) {
       e.preventDefault();
@@ -474,13 +474,44 @@
       });
     });
 
-    // $.ajax({
-    //   method: "GET",
-    //   url: "<?= base_url('home/notification') ?>",
-    //   success: function (response) {
-    //     console.log(response);
-    //   }
-    // });
+    function fetchNotificationRecord() {
+      $.ajax({
+        method: "GET",
+        url: "<?= base_url('home/notification') ?>",
+        success: function (response) {
+          let notifiedCount = response.notifiedCount || 0;
+          const messageCenter = $(".message-center");
+          messageCenter.empty();
+
+          if (Array.isArray(response.message)) {
+            response.message.forEach(function (item) {
+              const messageItem = `
+                    <a href="javascript:void(0)" class="message-item d-flex align-items-center border-bottom px-3 py-2">
+                        <div class="w-75 d-inline-block v-middle pl-2">
+                            <h5 class="message-title mb-0 mt-1">${item.raised_by}</h5>
+                            <span class="font-12 text-nowrap d-block text-muted text-truncate">${item.msg}</span>
+                        </div>
+                    </a>
+                `;
+
+              messageCenter.append(messageItem);
+            });
+          }
+          // else {
+          //   console.log('error');
+          // }
+          $('#message').text("You have " + notifiedCount + " new messages!");
+
+        }
+      });
+    }
+
+    fetchNotificationRecord();
+
+    setInterval(fetchNotificationRecord, 60000);
+
+
+
 
   });
 </script>

@@ -152,14 +152,51 @@ class GeneralModel extends Model
         return $builder->update($data);
     }
 
-    // function getNotificationData($table, $where)
-    // {
-    //     $builder = $this->db->table($table);
-    //     $builder->where('raised_by_dept', esc($where));
-    //     $builder->where('is_notified', '0');
-    //     $query = $builder->get();
+    function getNotificationData($table)
+    {
+        $query = $this->db->table($table)
+            ->select('notification.*, raised_tickets.*')
+            ->join('raised_tickets', 'raised_tickets.id = notification.ticket_id', 'left')
+            ->where('is_notified', '0')
+            ->get();
 
-    //     return $query->getResult();
-    // }
+        return $query->getResult();
+    }
+
+    function updateNotificationStatus($table, $where, $data)
+    {
+        $builder = $this->db->table($table);
+        $builder->where('ticket_id', esc($where));
+        return $builder->update($data);
+    }
+
+    function getAllTkts($table)
+    {
+        $builder = $this->db->table($table);
+        return $builder->countAll();
+    }
+
+    function countTodayTkts($table, $where)
+    {
+        $builder = $this->db->table($table);
+        $builder->where('DATE(tkt_raised_date)', $where);
+        return $builder->countAllResults();
+    }
+    function countPendingTkts($table, $statusTable)
+    {
+        $builder = $this->db->table($table);
+        $builder->join($statusTable, "$table.status_id = $statusTable.id");
+        $builder->where("$statusTable.tkt_status", 'In-Progress');
+        return $builder->countAllResults(); 
+    }
+    function countResolvedTkts($table, $statusTable)
+    {
+        $builder = $this->db->table($table);
+        $builder->join($statusTable, "$table.status_id = $statusTable.id");
+        $builder->where("$statusTable.tkt_status", 'Resolved');
+        return $builder->countAllResults(); 
+    }
+
+
 
 }

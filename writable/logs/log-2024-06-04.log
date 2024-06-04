@@ -1,0 +1,156 @@
+CRITICAL - 2024-06-04 15:39:37 --> CodeIgniter\Database\Exceptions\DatabaseException: You must set the database table to be used with your query.
+[Method: GET, Route: home/countAllTkts]
+in SYSTEMPATH\Database\BaseConnection.php on line 913.
+ 1 SYSTEMPATH\Model.php(705): CodeIgniter\Database\BaseConnection->table(null)
+ 2 SYSTEMPATH\Model.php(911): CodeIgniter\Model->builder()
+ 3 APPPATH\Models\GeneralModel.php(180): CodeIgniter\Model->__call('table', [...])
+ 4 APPPATH\Controllers\Home.php(367): App\Models\GeneralModel->countTkts('raised_tickets')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->countAllTkts()
+ 6 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 7 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(325): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2024-06-04 15:41:53 --> CodeIgniter\Database\Exceptions\DatabaseException: You must set the database table to be used with your query.
+[Method: GET, Route: home/countAllTkts]
+in SYSTEMPATH\Database\BaseConnection.php on line 913.
+ 1 SYSTEMPATH\Model.php(705): CodeIgniter\Database\BaseConnection->table(null)
+ 2 SYSTEMPATH\Model.php(911): CodeIgniter\Model->builder()
+ 3 APPPATH\Models\GeneralModel.php(180): CodeIgniter\Model->__call('table', [...])
+ 4 APPPATH\Controllers\Home.php(367): App\Models\GeneralModel->countTkts('raised_tickets')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->countAllTkts()
+ 6 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 7 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(325): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2024-06-04 15:42:34 --> CodeIgniter\Database\Exceptions\DatabaseException: You must set the database table to be used with your query.
+[Method: GET, Route: home/dashboard]
+in SYSTEMPATH\Database\BaseConnection.php on line 913.
+ 1 SYSTEMPATH\Model.php(705): CodeIgniter\Database\BaseConnection->table(null)
+ 2 SYSTEMPATH\Model.php(911): CodeIgniter\Model->builder()
+ 3 APPPATH\Models\GeneralModel.php(180): CodeIgniter\Model->__call('table', [...])
+ 4 APPPATH\Controllers\Home.php(150): App\Models\GeneralModel->countTkts('raised_tickets')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->dashboard()
+ 6 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 7 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(325): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2024-06-04 16:09:18 --> mysqli_sql_exception: Not unique table/alias: 'notification' in C:\xampp\htdocs\ticket-system\system\Database\MySQLi\Connection.php:310
+Stack trace:
+#0 C:\xampp\htdocs\ticket-system\system\Database\MySQLi\Connection.php(310): mysqli->query('SELECT `notific...', 0)
+#1 C:\xampp\htdocs\ticket-system\system\Database\BaseConnection.php(722): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `notific...')
+#2 C:\xampp\htdocs\ticket-system\system\Database\BaseConnection.php(636): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `notific...')
+#3 C:\xampp\htdocs\ticket-system\system\Database\BaseBuilder.php(1637): CodeIgniter\Database\BaseConnection->query('SELECT `notific...', Array, false)
+#4 C:\xampp\htdocs\ticket-system\app\Models\GeneralModel.php(161): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\ticket-system\app\Controllers\Home.php(341): App\Models\GeneralModel->getNotificationData('notification')
+#6 C:\xampp\htdocs\ticket-system\system\CodeIgniter.php(933): App\Controllers\Home->notification()
+#7 C:\xampp\htdocs\ticket-system\system\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+#8 C:\xampp\htdocs\ticket-system\system\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\ticket-system\system\Boot.php(325): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\ticket-system\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\ticket-system\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2024-06-04 16:09:18 --> CodeIgniter\Database\Exceptions\DatabaseException: Not unique table/alias: 'notification'
+[Method: GET, Route: home/notification]
+in SYSTEMPATH\Database\BaseConnection.php on line 676.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1637): CodeIgniter\Database\BaseConnection->query('SELECT `notification`.*, `raised_tickets`.*
+FROM `notification`
+LEFT JOIN `notification` ON `notification`.`ticket_id` = `raised_tickets`.`id`
+WHERE `is_notified` = :is_notified:', [...], false)
+ 2 APPPATH\Models\GeneralModel.php(161): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Home.php(341): App\Models\GeneralModel->getNotificationData('notification')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->notification()
+ 5 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 6 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(325): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2024-06-04 16:09:18 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Not unique table/alias: 'notification'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 315.
+ 1 SYSTEMPATH\Database\BaseConnection.php(722): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `notification`.*, `raised_tickets`.*
+FROM `notification`
+LEFT JOIN `notification` ON `notification`.`ticket_id` = `raised_tickets`.`id`
+WHERE `is_notified` = \'0\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(636): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `notification`.*, `raised_tickets`.*
+FROM `notification`
+LEFT JOIN `notification` ON `notification`.`ticket_id` = `raised_tickets`.`id`
+WHERE `is_notified` = \'0\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1637): CodeIgniter\Database\BaseConnection->query('SELECT `notification`.*, `raised_tickets`.*
+FROM `notification`
+LEFT JOIN `notification` ON `notification`.`ticket_id` = `raised_tickets`.`id`
+WHERE `is_notified` = :is_notified:', [...], false)
+ 4 APPPATH\Models\GeneralModel.php(161): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Home.php(341): App\Models\GeneralModel->getNotificationData('notification')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->notification()
+ 7 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 8 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(325): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2024-06-04 16:09:18 --> [Caused by] mysqli_sql_exception: Not unique table/alias: 'notification'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 310.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(310): mysqli->query('SELECT `notification`.*, `raised_tickets`.*
+FROM `notification`
+LEFT JOIN `notification` ON `notification`.`ticket_id` = `raised_tickets`.`id`
+WHERE `is_notified` = \'0\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(722): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `notification`.*, `raised_tickets`.*
+FROM `notification`
+LEFT JOIN `notification` ON `notification`.`ticket_id` = `raised_tickets`.`id`
+WHERE `is_notified` = \'0\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(636): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `notification`.*, `raised_tickets`.*
+FROM `notification`
+LEFT JOIN `notification` ON `notification`.`ticket_id` = `raised_tickets`.`id`
+WHERE `is_notified` = \'0\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1637): CodeIgniter\Database\BaseConnection->query('SELECT `notification`.*, `raised_tickets`.*
+FROM `notification`
+LEFT JOIN `notification` ON `notification`.`ticket_id` = `raised_tickets`.`id`
+WHERE `is_notified` = :is_notified:', [...], false)
+ 5 APPPATH\Models\GeneralModel.php(161): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Home.php(341): App\Models\GeneralModel->getNotificationData('notification')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Home->notification()
+ 8 SYSTEMPATH\CodeIgniter.php(509): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 9 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(325): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2024-06-04 11:30:46 --> ParseError: syntax error, unexpected token "}", expecting "("
+[Method: GET, Route: home/notification]
+in APPPATH\Controllers\Home.php on line 360.
+ 1 SYSTEMPATH\Router\Router.php(562): CodeIgniter\Router\AutoRouter->getRoute('home/notification', 'GET')
+ 2 SYSTEMPATH\Router\Router.php(227): CodeIgniter\Router\Router->autoRoute('home/notification')
+ 3 SYSTEMPATH\CodeIgniter.php(834): CodeIgniter\Router\Router->handle('home/notification')
+ 4 SYSTEMPATH\CodeIgniter.php(457): CodeIgniter\CodeIgniter->tryToRouteIt(Object(CodeIgniter\Router\RouteCollection))
+ 5 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(325): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2024-06-04 11:31:47 --> ParseError: syntax error, unexpected token "}"
+[Method: GET, Route: home/notification]
+in APPPATH\Controllers\Home.php on line 362.
+ 1 SYSTEMPATH\Router\Router.php(562): CodeIgniter\Router\AutoRouter->getRoute('home/notification', 'GET')
+ 2 SYSTEMPATH\Router\Router.php(227): CodeIgniter\Router\Router->autoRoute('home/notification')
+ 3 SYSTEMPATH\CodeIgniter.php(834): CodeIgniter\Router\Router->handle('home/notification')
+ 4 SYSTEMPATH\CodeIgniter.php(457): CodeIgniter\CodeIgniter->tryToRouteIt(Object(CodeIgniter\Router\RouteCollection))
+ 5 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(325): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2024-06-04 17:03:48 --> ParseError: syntax error, unexpected token "}", expecting ";"
+[Method: GET, Route: home/notification]
+in APPPATH\Models\GeneralModel.php on line 177.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(296): CodeIgniter\Autoloader\Autoloader->includeFile('C:\\xampp\\htdocs\\ticket-system\\app\\Models\\GeneralModel.php')
+ 2 SYSTEMPATH\Autoloader\Autoloader.php(272): CodeIgniter\Autoloader\Autoloader->loadInNamespace('App\\Models\\GeneralModel')
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass('App\\Models\\GeneralModel')
+ 4 SYSTEMPATH\Config\Factories.php(290): class_exists('App\\Models\\GeneralModel')
+ 5 SYSTEMPATH\Config\Factories.php(216): CodeIgniter\Config\Factories::locateClass([...], 'GeneralModel')
+ 6 SYSTEMPATH\Config\Factories.php(159): CodeIgniter\Config\Factories::getDefinedInstance([...], 'GeneralModel', [...])
+ 7 SYSTEMPATH\Common.php(802): CodeIgniter\Config\Factories::__callStatic('models', [...])
+ 8 APPPATH\Controllers\Home.php(12): model('GeneralModel')
+ 9 SYSTEMPATH\CodeIgniter.php(903): App\Controllers\Home->__construct()
+10 SYSTEMPATH\CodeIgniter.php(500): CodeIgniter\CodeIgniter->createController()
+11 SYSTEMPATH\CodeIgniter.php(355): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(325): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

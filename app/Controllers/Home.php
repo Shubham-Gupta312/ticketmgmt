@@ -89,7 +89,7 @@ class Home extends BaseController
                 $prt = trim($this->request->getPost('priority'));
                 $atch = $this->request->getFile('attachment');
                 $msg = trim($this->request->getPost('msg'));
-                
+
                 $userData = session()->get('username');
 
                 $prefix = "RMH-";
@@ -125,7 +125,17 @@ class Home extends BaseController
                     $Q = $this->gM->insertInto("raised_tickets", $data);
 
                     if ($Q) {
-                        $response = ['status' => 'success', 'message' => 'Data Added Successfully!'];
+                        $data2 = [
+                            'ticket_id' => $Q,
+                            'created_at' => date('Y-m-d H:i:s'),
+                        ];
+
+                        $ntf = $this->gM->insertInto('notification', $data2);
+                        if ($ntf) {
+                            $response = ['status' => 'success', 'message' => 'Ticket Raised Successfully!'];
+                        } else {
+                            $response = ['status' => 'error', 'message' => 'Something went wrong!'];
+                        }
                     } else {
                         $response = ['status' => 'error', 'message' => 'Something went wrong!'];
                     }
@@ -136,7 +146,14 @@ class Home extends BaseController
                 return $this->response->setJSON($response);
             }
         } else {
+            $dt = date('Y-m-d');
+
             $data['services'] = $this->gM->getTableData('service');
+            $data['tickets'] = $this->gM->getAllTkts('raised_tickets');
+            $data['todaytickets'] = $this->gM->countTodayTkts('raised_tickets', $dt);
+            $data['pendingtickets'] = $this->gM->countPendingTkts('raised_tickets', 'ticket_status');
+            $data['resolvedtickets'] = $this->gM->countResolvedTkts('raised_tickets', 'ticket_status');
+
             return view('home/dashboard', $data);
         }
     }
@@ -325,14 +342,69 @@ class Home extends BaseController
             return $this->response->setJSON($response);
         }
     }
+    public function notification()
+    {
+        $md = $this->gM->getNotificationData('notification');
+        if ($md) {
+            $notifiedCount = 0;
 
-    // public function notification()
+            foreach ($md as $value) {
+                if ($value->is_notified === '0') {
+                    $data = ['is_notified' => '1'];
+                    $this->gM->updateNotificationStatus('notification', $value->ticket_id, $data);
+                    $notifiedCount++;
+                }
+            }
+
+            return $this->response->setJSON(['status' => 'success', 'message' => $md, 'notifiedCount' => $notifiedCount]);
+        } else {
+            return $this->response->setJSON(['error' => 'error', 'message' => 'No new Notification']);
+        }
+    }
+
+    // public function CountAllTkts()
     // {
-    //     $dept = session()->get('username');
-    //     $md = $this->gM->getNotificationData('raised_tickets', $dept);
-
-    //     echo "<pre>";
-    //     print_r($md);
+    //     $d = $this->gM->getAllTkts('raised_tickets');
+    //     if ($d) {
+    //         return $this->response->setJSON(['status' => 'success', 'message' => $d]);
+    //     } else {
+    //         return $this->response->setJSON(['status' => 'false', 'message' => 'Something went wrong!']);
+    //     }
     // }
+
+    // public function CountTodayTkts()
+    // {
+    //     $dt = date('Y-m-d');
+    //     $count = $this->gM->countTodayTkts('raised_tickets', $dt);
+
+    //     if ($count !== false) {
+    //         return $this->response->setJSON(['status' => 'success', 'count' => $count]);
+    //     } else {
+    //         return $this->response->setJSON(['status' => 'false', 'message' => 'Something went wrong!']);
+    //     }
+    // }
+
+    // public function countPendingTkts()
+    // {
+    //     $count = $this->gM->countPendingTkts('raised_tickets', 'ticket_status');
+
+    //     if ($count !== false) {
+    //         return $this->response->setJSON(['status' => 'success', 'count' => $count]);
+    //     } else {
+    //         return $this->response->setJSON(['status' => 'false', 'message' => 'Something went wrong!']);
+    //     }
+    // }
+    // public function countResolvedTkts()
+    // {
+    //     $count = $this->gM->countResolvedTkts('raised_tickets', 'ticket_status');
+
+    //     if ($count !== false) {
+    //         return $this->response->setJSON(['status' => 'success', 'count' => $count]);
+    //     } else {
+    //         return $this->response->setJSON(['status' => 'false', 'message' => 'Something went wrong!']);
+    //     }
+    // }
+
+
 
 }
