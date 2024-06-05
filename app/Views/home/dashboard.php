@@ -68,7 +68,7 @@
                 <i class="ti-wallet"></i>
               </div>
               <div class="ml-2 align-self-center">
-                <h3 class="mb-0 font-weight-light"><?php echo $tickets ? $tickets : '0' ?></h3>
+                <h3 class="mb-0 font-weight-light" id="total"></h3>
                 <h5 class="text-muted mb-0">Total Tickets</h5>
               </div>
             </div>
@@ -85,7 +85,7 @@
                 <i class="mdi mdi-cellphone-link"></i>
               </div>
               <div class="ml-2 align-self-center">
-                <h3 class="mb-0 font-weight-light"><?php echo $todaytickets ? $todaytickets : '0' ?></h3>
+                <h3 class="mb-0 font-weight-light" id="today"></h3>
                 <h5 class="text-muted mb-0">Today Tickets</h5>
               </div>
             </div>
@@ -102,7 +102,7 @@
                 <i class="mdi mdi-cart-outline"></i>
               </div>
               <div class="ml-2 align-self-center">
-                <h3 class="mb-0 font-weight-light"><?php echo $pendingtickets ? $pendingtickets : '0' ?></h3>
+                <h3 class="mb-0 font-weight-light" id="pending"></h3>
                 <h5 class="text-muted mb-0">In-Progress Tickets</h5>
               </div>
             </div>
@@ -119,7 +119,7 @@
                 <i class="mdi mdi-bullseye"></i>
               </div>
               <div class="ml-2 align-self-center">
-                <h3 class="mb-0 font-weight-light"><?php echo $resolvedtickets ? $resolvedtickets : '0' ?></h3>
+                <h3 class="mb-0 font-weight-light" id="resolved"></h3>
                 <h5 class="text-muted mb-0">Resolved Tickets</h5>
               </div>
             </div>
@@ -510,6 +510,46 @@
 
     setInterval(fetchNotificationRecord, 60000);
 
+    $.ajax({
+      method: "GET",
+      url: "<?= base_url('home/CountAllTkts') ?>",
+      success: function (response) {
+        // console.log(response);
+        if (response.status == 'success') {
+          $('#total').text(response.message);
+        }
+      }
+    });
+    $.ajax({
+      method: "GET",
+      url: "<?= base_url('home/CountTodayTkts') ?>",
+      success: function (response) {
+        // console.log(response);
+        if (response.status == 'success') {
+          $('#today').text(response.count);
+        }
+      }
+    });
+    $.ajax({
+      method: "GET",
+      url: "<?= base_url('home/countPendingTkts') ?>",
+      success: function (response) {
+        // console.log(response);
+        if (response.status == 'success') {
+          $('#pending').text(response.count);
+        }
+      }
+    });
+    $.ajax({
+      method: "GET",
+      url: "<?= base_url('home/countResolvedTkts') ?>",
+      success: function (response) {
+        // console.log(response);
+        if (response.status == 'success') {
+          $('#resolved').text(response.count);
+        }
+      }
+    });
 
 
 

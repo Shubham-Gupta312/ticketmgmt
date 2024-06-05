@@ -146,14 +146,7 @@ class Home extends BaseController
                 return $this->response->setJSON($response);
             }
         } else {
-            $dt = date('Y-m-d');
-
             $data['services'] = $this->gM->getTableData('service');
-            $data['tickets'] = $this->gM->getAllTkts('raised_tickets');
-            $data['todaytickets'] = $this->gM->countTodayTkts('raised_tickets', $dt);
-            $data['pendingtickets'] = $this->gM->countPendingTkts('raised_tickets', 'ticket_status');
-            $data['resolvedtickets'] = $this->gM->countResolvedTkts('raised_tickets', 'ticket_status');
-
             return view('home/dashboard', $data);
         }
     }
@@ -362,48 +355,48 @@ class Home extends BaseController
         }
     }
 
-    // public function CountAllTkts()
-    // {
-    //     $d = $this->gM->getAllTkts('raised_tickets');
-    //     if ($d) {
-    //         return $this->response->setJSON(['status' => 'success', 'message' => $d]);
-    //     } else {
-    //         return $this->response->setJSON(['status' => 'false', 'message' => 'Something went wrong!']);
-    //     }
-    // }
+    public function CountAllTkts()
+    {
+        $d = $this->gM->getAllTkts('raised_tickets');
+        if ($d) {
+            return $this->response->setJSON(['status' => 'success', 'message' => $d]);
+        } else {
+            return $this->response->setJSON(['status' => 'false', 'message' => 'Something went wrong!']);
+        }
+    }
 
-    // public function CountTodayTkts()
-    // {
-    //     $dt = date('Y-m-d');
-    //     $count = $this->gM->countTodayTkts('raised_tickets', $dt);
+    public function CountTodayTkts()
+    {
+        $dt = date('Y-m-d');
+        $count = $this->gM->countTodayTkts('raised_tickets', $dt);
 
-    //     if ($count !== false) {
-    //         return $this->response->setJSON(['status' => 'success', 'count' => $count]);
-    //     } else {
-    //         return $this->response->setJSON(['status' => 'false', 'message' => 'Something went wrong!']);
-    //     }
-    // }
+        if ($count !== false) {
+            return $this->response->setJSON(['status' => 'success', 'count' => $count]);
+        } else {
+            return $this->response->setJSON(['status' => 'false', 'message' => 'Something went wrong!']);
+        }
+    }
 
-    // public function countPendingTkts()
-    // {
-    //     $count = $this->gM->countPendingTkts('raised_tickets', 'ticket_status');
+    public function countPendingTkts()
+    {
+        $count = $this->gM->countPendingTkts('raised_tickets', 'ticket_status');
 
-    //     if ($count !== false) {
-    //         return $this->response->setJSON(['status' => 'success', 'count' => $count]);
-    //     } else {
-    //         return $this->response->setJSON(['status' => 'false', 'message' => 'Something went wrong!']);
-    //     }
-    // }
-    // public function countResolvedTkts()
-    // {
-    //     $count = $this->gM->countResolvedTkts('raised_tickets', 'ticket_status');
+        if ($count !== false) {
+            return $this->response->setJSON(['status' => 'success', 'count' => $count]);
+        } else {
+            return $this->response->setJSON(['status' => 'false', 'message' => 'Something went wrong!']);
+        }
+    }
+    public function countResolvedTkts()
+    {
+        $count = $this->gM->countResolvedTkts('raised_tickets', 'ticket_status');
 
-    //     if ($count !== false) {
-    //         return $this->response->setJSON(['status' => 'success', 'count' => $count]);
-    //     } else {
-    //         return $this->response->setJSON(['status' => 'false', 'message' => 'Something went wrong!']);
-    //     }
-    // }
+        if ($count !== false) {
+            return $this->response->setJSON(['status' => 'success', 'count' => $count]);
+        } else {
+            return $this->response->setJSON(['status' => 'false', 'message' => 'Something went wrong!']);
+        }
+    }
 
 
 
