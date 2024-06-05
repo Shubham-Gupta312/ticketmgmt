@@ -125,7 +125,7 @@
       </div>
       <!-- Column -->
     </div>
-    
+
     <div class="row page-titles d-flex justify-content-end rmv_page-titles">
       <button class="btn btn-outline-info" id="dlReport"><i class="fas fa-download"></i> Excel Report</button>
     </div>
@@ -234,8 +234,22 @@
 
       $('#dlReport').click(function (e) {
         e.preventDefault();
-        console.log('clicked');
-        window.location.href = "<?= base_url('superadmin/downloadReport') ?>";
+        // console.log('clicked');
+        var dept = $('#dept').val();
+        var priority = $('#priority').val();
+        var status = $('#status').val();
+        var from = $('#from').val();
+        var to = $('#to').val();
+
+        var queryString = $.param({
+          dept: dept,
+          priority: priority,
+          status: status,
+          from: from,
+          to: to
+        });
+
+        window.location.href = "<?= base_url('superadmin/downloadReport') ?>" + "?" + queryString;;
       });
 
       $('#search').click(function (e) {

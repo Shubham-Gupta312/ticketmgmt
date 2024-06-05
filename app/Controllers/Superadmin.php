@@ -490,10 +490,10 @@ class Superadmin extends BaseController
                 $dt->where('priority', $prt);
             }
             if (!empty($frm)) {
-                $dt->where('DATE(tkt_raised_date) >=', $frm);
+                $dt->where('DATE(tkt_raised_date) >=', $frm . ' 00:00:00');
             }
             if (!empty($to)) {
-                $dt->where('DATE(tkt_closed_date) <=', $to);
+                $dt->where('DATE(tkt_closed_date) <=', $to . ' 23:59:59');
             }
             if (!empty($sts)) {
                 $dt->where('tkt_status', $sts);
@@ -547,9 +547,15 @@ class Superadmin extends BaseController
     public function downloadReport()
     {
         $md = new \App\Models\SuperadminModel();
-        $data = $md->getTableData('raised_tickets');
 
-
+        $dept = $this->request->getGet('dept');
+        $priority = $this->request->getGet('priority');
+        $status = $this->request->getGet('status');
+        $from = $this->request->getGet('from');
+        $to = $this->request->getGet('to');
+    
+        $data = $md->getFilteredTableData('raised_tickets', $dept, $priority, $status, $from, $to);
+    
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
