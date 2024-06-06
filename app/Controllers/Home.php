@@ -127,6 +127,7 @@ class Home extends BaseController
                     if ($Q) {
                         $data2 = [
                             'ticket_id' => $Q,
+                            'status' => 'Open',
                             'created_at' => date('Y-m-d H:i:s'),
                         ];
 
@@ -162,6 +163,12 @@ class Home extends BaseController
             $orderColumnName = $_GET['columns'][$orderColumnIndex]['data'] ?? 'id';
             $orderDir = $_GET['order'][0]['dir'] ?? 'asc';
 
+            $nm = $this->request->getGet('dept');
+            $prt = $this->request->getGet('priority');
+            $status = $this->request->getGet('status');
+            $frm = $this->request->getGet('from');
+            $to = $this->request->getGet('to');
+
             $dt = $this->gM->getRespData('raised_tickets');
 
             if (!empty($searchValue)) {
@@ -169,6 +176,21 @@ class Home extends BaseController
                     ->orLike('tkt_id', $searchValue)
                     ->orLike('priority', $searchValue)
                     ->groupEnd();
+            }
+            if (!empty($nm)) {
+                $dt->where('raised_by_dept', $nm);
+            }
+            if (!empty($prt)) {
+                $dt->where('priority', $prt);
+            }
+            if (!empty($frm)) {
+                $dt->where('DATE(tkt_raised_date) >=', $frm . ' 00:00:00');
+            }
+            if (!empty($to)) {
+                $dt->where('DATE(tkt_closed_date) <=', $to . ' 23:59:59');
+            }
+            if (!empty($status)) {
+                $dt->where('tkt_status', $status);
             }
 
             $dt->orderBy($orderColumnName, $orderDir);
@@ -315,7 +337,6 @@ class Home extends BaseController
             $data['updated_at'] = date('Y-m-d H:i:s');
 
             $Q = $this->gM->updateDepartment("ticket_status", $id, $data);
-
             if ($Q) {
                 $data1 = array();
                 $data1['tkt_closed_date'] = date('Y-m-d H:i:s');
@@ -323,7 +344,22 @@ class Home extends BaseController
                 $tkt = $this->gM->updateTicket("raised_tickets", $id, $data1);
 
                 if ($tkt) {
-                    $response = ['status' => 'success', 'message' => 'Status Updated Successfully!'];
+                    $ftd = $this->gM->getStRow('raised_tickets', $id);
+                    if ($ftd) {
+                        $ntid = $ftd['id'];
+                        $data2 = array();
+                        $data2['status'] = esc($dt);
+
+                        $upnt = $this->gM->updateNotificationStatus('notification', $ntid, $data2);
+
+                        if ($upnt) {
+                            $response = ['status' => 'success', 'message' => 'Status Updated Successfully!'];
+                        }else{
+                            $response = ['status' => 'error', 'message' => 'Failed to update data!'];
+                        }
+                    } else {
+                        $response = ['status' => 'error', 'message' => 'Failed to retrieve updated data!'];
+                    }
                 } else {
                     $response = ['status' => 'error', 'message' => 'Something went wrong!'];
                 }

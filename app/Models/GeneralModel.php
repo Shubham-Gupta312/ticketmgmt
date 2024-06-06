@@ -151,6 +151,14 @@ class GeneralModel extends Model
         $builder->where('status_id', esc($where));
         return $builder->update($data);
     }
+    function getStRow($table, $where)
+    {
+        $builder = $this->db->table($table);
+        $builder->where('status_id', esc($where));
+        $query = $builder->get();
+
+        return $query->getRowArray();
+    }
 
     function getNotificationData($table)
     {

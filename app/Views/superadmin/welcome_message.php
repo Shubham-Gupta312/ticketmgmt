@@ -32,10 +32,10 @@
     margin-bottom: 20px;
   }
 
-  .form-group {
+  /* .form-group {
     display: flex;
     align-items: center;
-  }
+  }  */
 
   .form-group input {
     margin-right: 10px;
@@ -136,15 +136,32 @@
         <div class="row page-titles rmv_page-titles">
           <div class="col-md-4 form-group">
             <label for="dept">Department:</label>
-            <input type="text" name="dept" id="dept" class="form-control" placeholder="Enter department name">
+            <input type="text" name="dept" id="dept" class="form-control" placeholder="Enter department username">
           </div>
           <div class="col-md-4 form-group">
             <label for="priority">Priority:</label>
-            <input type="text" name="priority" id="priority" class="form-control" placeholder="Enter priority">
+            <!-- <input type="text" name="priority" id="priority" class="form-control" placeholder="Enter priority"> -->
+            <div class="input-group">
+              <select name="priority" id="priority" class="form-control form-group">
+                <option value="">Please Select One</option>
+                <option value="Critical">Critical</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
           </div>
           <div class="col-md-4 form-group">
             <label for="status">Status:</label>
-            <input type="text" name="status" id="status" class="form-control" placeholder="Enter Ticket status">
+            <!-- <input type="text" name="status" id="status" class="form-control" placeholder="Enter Ticket status"> -->
+            <div class="input-group">
+              <select name="status" id="status" class="form-control form-group">
+                <option value="">Please Select One</option>
+                <option value="Open">Open</option>
+                <option value="In-Progress">In-Progress</option>
+                <option value="Resolved">Resolved</option>
+              </select>
+            </div>
           </div>
           <div class="col-md-4 form-group">
             <label for="from">From Date:</label>
@@ -169,7 +186,7 @@
           <tr>
             <th scope="col">Sl.no</th>
             <th scope="col">Ticket Id</th>
-            <th scope="col">Department Name</th>
+            <th scope="col">Department Username</th>
             <th scope="col">Issue</th>
             <th scope="col">Raised By</th>
             <th scope="col">Priority</th>
@@ -193,7 +210,11 @@
     $(document).ready(function () {
       var table;
       function FilteredRecords() {
-        $('#AllRaisedTickets').DataTable().destroy();
+        // $('#AllRaisedTickets').DataTable().destroy();
+        if ($.fn.DataTable.isDataTable('#AllRaisedTickets')) {
+          $('#AllRaisedTickets').DataTable().destroy();
+        }
+
 
         table = $('#AllRaisedTickets').DataTable({
           processing: true,
@@ -259,7 +280,11 @@
 
       $('#reset').click(function (e) {
         e.preventDefault();
-        $('input').val('');
+        $('#dept').val('');
+        $('#priority').val('');
+        $('#status').val('');
+        $('#from').val('');
+        $('#to').val('');
         FilteredRecords();
       });
 

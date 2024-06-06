@@ -53,11 +53,6 @@
     color: #007bff !important;
   }
 
-  .form-group {
-    display: flex;
-    align-items: center;
-  }
-
   .form-group input {
     margin-right: 10px;
   }
@@ -184,39 +179,6 @@
       <button class="btn btn-outline-primary" id="raisedTckt"><i class="fas fa-plus"></i> Raise Tickets</button>
     </div>
 
-    <div class="container-r">
-      <h4>Filters:</h4>
-      <form id="filters">
-        <div class="row page-titles rmv_page-titles">
-          <div class="col-md-4 form-group">
-            <label for="dept">Department:</label>
-            <input type="text" name="dept" id="dept" class="form-control" placeholder="Enter department name">
-          </div>
-          <div class="col-md-4 form-group">
-            <label for="priority">Priority:</label>
-            <input type="text" name="priority" id="priority" class="form-control" placeholder="Enter priority">
-          </div>
-          <div class="col-md-4 form-group">
-            <label for="status">Status:</label>
-            <input type="text" name="status" id="status" class="form-control" placeholder="Enter Ticket status">
-          </div>
-          <div class="col-md-4 form-group">
-            <label for="from">From Date:</label>
-            <input type="date" name="from" id="from" class="form-control">
-          </div>
-          <div class="col-md-4 form-group">
-            <label for="to">To Date:</label>
-            <input type="date" name="to" id="to" class="form-control">
-          </div>
-          <div class="col-md-4 form-group btn-search">
-            <button class="btn btn-outline-primary" id="search" style="color: #f18800; border: 1px solid #f18800;"><i class="fas fa-search"></i> Search</button>
-            <button class="btn btn-outline-warning" id="reset"
-              style="background-color: #fff !important; margin-left: 5px;"><i class="fas fa-spinner"></i> Reset</button>
-          </div>
-        </div>
-      </form>
-    </div>
-
     <div class="category-from">
       <div class="block_container" style="display: none;">
         <form id="RaisedTicketForm">
@@ -281,6 +243,56 @@
           </div>
         </form>
       </div>
+    </div>
+
+    <div class="container-r">
+      <h4>Filters:</h4>
+      <form id="filters">
+        <div class="row page-titles rmv_page-titles">
+          <div class="col-md-4 form-group">
+            <label for="dept">Department:</label>
+            <input type="text" name="dept" id="dept" class="form-control" placeholder="Enter department name">
+          </div>
+          <div class="col-md-4 form-group">
+            <label for="priority">Priority:</label>
+            <!-- <input type="text" name="priority" id="priority" class="form-control" placeholder="Enter priority"> -->
+            <div class="input-group">
+              <select name="priority" id="priority" class="form-control form-group">
+                <option value="">Please Select One</option>
+                <option value="Critical">Critical</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 form-group">
+            <label for="st">Status:</label>
+            <!-- <input type="text" name="status" id="status" class="form-control" placeholder="Enter Ticket status"> -->
+            <div class="input-group">
+              <select name="filterstatus" id="filterstatus" class="form-control">
+                <option value="">Please Select One</option>
+                <option value="Open">Open</option>
+                <option value="In-Progress">In-Progress</option>
+                <option value="Resolved">Resolved</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 form-group">
+            <label for="from">From Date:</label>
+            <input type="date" name="from" id="from" class="form-control">
+          </div>
+          <div class="col-md-4 form-group">
+            <label for="to">To Date:</label>
+            <input type="date" name="to" id="to" class="form-control">
+          </div>
+          <div class="col-md-4 form-group btn-search">
+            <button class="btn btn-outline-primary" id="search"><i class="fas fa-search"></i> Search</button>
+            <button class="btn btn-outline-warning" id="reset"
+              style="background-color: #fff !important; margin-left: 5px;"><i class="fas fa-spinner"></i> Reset</button>
+          </div>
+        </div>
+      </form>
     </div>
 
     <ul class="nav nav-tabs">
@@ -461,33 +473,48 @@
       }
     });
 
-    var table = $('#RaisedTicketTable').DataTable({
-      processing: true,
-      serverSide: true,
-      paging: true,
-      order: [[1, 'desc']],
-      "fnCreatedRow": function (row, data, index) {
-        var pageInfo = table.page.info();
-        var currentPage = pageInfo.page;
-        var pageLength = pageInfo.length;
-        var rowNumber = index + 1 + (currentPage * pageLength);
-        $('td', row).eq(0).html(rowNumber);
-      },
-      columnDefs: [
-        { targets: [0, 10], orderable: false }
-      ],
-      ajax: {
-        url: "<?= base_url('home/raisedTickets') ?>",
-        type: "GET",
-        error: function (xhr, error, thrown) {
-          // console.log("AJAX error:", xhr, error, thrown);
-        }
-      },
-      drawCallback: function (settings) {
-        // console.log('Table redrawn:', settings);
+    var table;
+    function fetchAllTicketData() {
+      if ($.fn.DataTable.isDataTable('#RaisedTicketTable')) {
+        $('#RaisedTicketTable').DataTable().destroy();
       }
-    });
 
+      table = $('#RaisedTicketTable').DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true,
+        order: [[1, 'desc']],
+        "fnCreatedRow": function (row, data, index) {
+          var pageInfo = table.page.info();
+          var currentPage = pageInfo.page;
+          var pageLength = pageInfo.length;
+          var rowNumber = index + 1 + (currentPage * pageLength);
+          $('td', row).eq(0).html(rowNumber);
+        },
+        columnDefs: [
+          { targets: [0, 10], orderable: false }
+        ],
+        ajax: {
+          url: "<?= base_url('home/raisedTickets') ?>",
+          type: "GET",
+          data: function (d) {
+            d.dept = $('#dept').val();
+            d.priority = $('#priority').val();
+            d.status = $('#filterstatus').val();
+            d.from = $('#from').val();
+            d.to = $('#to').val();
+
+          },
+          error: function (xhr, error, thrown) {
+            // console.log("AJAX error:", xhr, error, thrown);
+          }
+        },
+        drawCallback: function (settings) {
+          // console.log('Table redrawn:', settings);
+        }
+      });
+    };
+    fetchAllTicketData();
 
     $(document).on('click', '#edit', function (e) {
       e.preventDefault();
@@ -539,7 +566,7 @@
               const messageItem = `
                     <a href="javascript:void(0)" class="message-item d-flex align-items-center border-bottom px-3 py-2">
                         <div class="w-75 d-inline-block v-middle pl-2">
-                            <h5 class="message-title mb-0 mt-1">${item.raised_by}</h5>
+                            <h5 class="message-title mb-0 mt-1">${item.raised_by} <span id="sts" style="color: blue;">${item.status}</span> </h5>
                             <span class="font-12 text-nowrap d-block text-muted text-truncate">${item.msg}</span>
                         </div>
                     </a>
@@ -603,6 +630,20 @@
     });
 
 
+    $('#search').click(function (e) {
+      e.preventDefault();
+      fetchAllTicketData();
+    });
+
+    $('#reset').click(function (e) {
+      e.preventDefault();
+      $('#dept').val('');
+      $('#priority').val('');
+      $('#filterstatus').val('');
+      $('#from').val('');
+      $('#to').val('');
+      fetchAllTicketData();
+    });
 
   });
 </script>

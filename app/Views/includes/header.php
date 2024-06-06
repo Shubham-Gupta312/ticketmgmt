@@ -81,8 +81,7 @@
                                             <a href="javascript:void(0)"
                                                 class="message-item d-flex align-items-center border-bottom px-3 py-2">
                                                 <div class="w-75 d-inline-block v-middle pl-2">
-                                                    <h5 class="message-title mb-0 mt-1"></h5> <span
-                                                        class="font-12 text-nowrap d-block text-muted text-truncate"></span>
+                                                    <h5 class="message-title mb-0 mt-1"> <span id="sts"></span> </h5> <span class="font-12 text-nowrap d-block text-muted text-truncate"></span>
                                                 </div>
                                             </a>
                                         </div>
