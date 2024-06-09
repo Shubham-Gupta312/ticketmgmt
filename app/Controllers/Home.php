@@ -348,9 +348,11 @@ class Home extends BaseController
                     if ($ftd) {
                         $ntid = $ftd['id'];
                         $data2 = array();
+                        $data2['ticket_id'] = esc($ntid);
                         $data2['status'] = esc($dt);
+                        $data2['created_at'] = date('Y-m-d H:i:s');
 
-                        $upnt = $this->gM->updateNotificationStatus('notification', $ntid, $data2);
+                        $upnt = $this->gM->insertInto('notification', $data2);
 
                         if ($upnt) {
                             $response = ['status' => 'success', 'message' => 'Status Updated Successfully!'];

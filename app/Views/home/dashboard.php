@@ -65,6 +65,20 @@
     display: flex;
     align-items: flex-end;
   }
+
+  .badge-custom {
+    background-color: blue;
+    color: white;
+    padding: 0.25em 0.5em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.375rem;
+    margin-left: 0.5em;
+  }
 </style>
 
 <?= $this->endSection(); ?>
@@ -566,7 +580,9 @@
               const messageItem = `
                     <a href="javascript:void(0)" class="message-item d-flex align-items-center border-bottom px-3 py-2">
                         <div class="w-75 d-inline-block v-middle pl-2">
-                            <h5 class="message-title mb-0 mt-1">${item.raised_by} <span id="sts" style="color: blue;">${item.status}</span> </h5>
+                            <h5 class="message-title mb-0 mt-1">${item.raised_by} 
+                            <span class="badge badge-custom" id="sts">${item.status}</span>
+                            </h5>
                             <span class="font-12 text-nowrap d-block text-muted text-truncate">${item.msg}</span>
                         </div>
                     </a>
